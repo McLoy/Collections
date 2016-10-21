@@ -179,4 +179,46 @@ public class ArrayList2Test {
         assertEquals(null, arr.get(1));
 
     }
+
+    @Test
+    public void testLastIndexOfValue() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(2);
+        arr.add("Tom");
+        arr.add("Jerry");
+        arr.add("Jerry");
+        arr.add("Tom");
+        arr.add("Jerry");
+        arr.add("Miranda");
+        assertEquals(-1, arr.lastIndexOf("Hose"));
+
+    }
+
+    @Test
+    public void testLastIndexOfValue2() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(2);
+        arr.add("Mark");
+        arr.add("Jerry");
+        arr.add("Jerry");
+        arr.add("Tom");
+        arr.add("Jerry");
+        arr.add("Miranda");
+        assertEquals(0, arr.lastIndexOf("Mark"));
+
+    }
+
+    @Test
+    public void testLastIndexOfValue3() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(2);
+        arr.add("Mark");
+        arr.add("Jerry");
+        arr.add("Jerry");
+        arr.add("Tom");
+        arr.add("Jerry");
+        arr.add("Miranda");
+        assertEquals(5, arr.lastIndexOf("Miranda"));
+
+    }
 }

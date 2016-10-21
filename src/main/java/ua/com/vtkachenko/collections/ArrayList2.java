@@ -153,8 +153,12 @@ public class ArrayList2<V> implements List<V> {
     } ////???????
 
     public int lastIndexOf(Object o) {
-        return 0;
-    } ////???????
+
+        for (int i = size - 1; i >= 0 ; i--) {
+            if (elementData[i] == (V)o) return i;
+        }
+        return -1;
+    }
 
     public ListIterator<V> listIterator() {
         return null;
