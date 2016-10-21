@@ -124,25 +124,16 @@ public class ArrayList2<V> implements List<V> {
         System.arraycopy(elementData, index, elementData, index + 1, size - index);
         elementData[index] = element;
         size++;
-//        if (ensureCapacity(size + 1)){
-//            System.arraycopy(elementData, index, elementData, index + 1, size - index);
-//            elementData[index] = element;
-//            size++;
-//        }
-
-//        if (index + 1 > size) {
-//            throw new IndexOutOfBoundsException();
-//        } else {
-//
-//            for (int i = 0; i < size; i++) {
-//                if (i == index) elementData[i] = element;
-//            }
-//        }
 
     }
 
     public V remove(int index) {
-        return null;
+
+        V deletedElement = elementData[index];
+        int numMoved = size - index - 1;
+        System.arraycopy(elementData, index + 1, elementData, index, numMoved);
+        elementData[--size] = null;
+        return deletedElement;
     }
 
     public int indexOf(Object o) {

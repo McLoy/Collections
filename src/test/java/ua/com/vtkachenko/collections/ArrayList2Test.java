@@ -148,4 +148,14 @@ public class ArrayList2Test {
         assertEquals("Megan", word);
 
     }
+
+    @Test
+    public void testRemoveElementByIndex() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(3);
+        arr.add("Tom");
+        arr.add("Jerry");
+        assertEquals("Jerry", arr.remove(1));
+
+    }
 }
