@@ -98,4 +98,15 @@ public class ArrayList2Test {
         assertEquals(5, arr.get(19).intValue());
 
     }
+
+    @Test (expected = IndexOutOfBoundsException.class)
+    public void testArrayList2AddValueFromOutOfBoundsPosition() throws Exception {
+
+        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        for (int i = 0; i < 20; i++) {
+            arr.add(i);
+        }
+        arr.add(30, 5);
+
+    }
 }

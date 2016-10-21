@@ -121,8 +121,13 @@ public class ArrayList2<V> implements List<V> {
 
     public void add(int index, V element) {
 
-        for (int i = 0; i < elementData.length; i++) {
-            if (i == index) elementData[i] = element;
+        if (index + 1 > size) {
+            throw new IndexOutOfBoundsException();
+        } else {
+
+            for (int i = 0; i < size; i++) {
+                if (i == index) elementData[i] = element;
+            }
         }
 
     }
