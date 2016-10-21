@@ -46,15 +46,15 @@ public class ArrayList2<V> implements List<V> {
 
     public Iterator<V> iterator() {
         return null;
-    }
+    } ////???????
 
     public Object[] toArray() {
         return new Object[0];
-    }
+    } ////???????
 
     public <T> T[] toArray(T[] a) {
         return null;
-    }
+    } ////???????
 
     public boolean add(V v) {
 
@@ -78,30 +78,42 @@ public class ArrayList2<V> implements List<V> {
     }
 
     public boolean remove(Object o) {
+
+        for (int i = 0; i < size; i++) {
+            if (elementData[i] == (V)o){
+                remove(i);
+                return true;
+            }
+        }
+
         return false;
     }
 
     public boolean containsAll(Collection<?> c) {
         return false;
-    }
+    } ////???????
 
     public boolean addAll(Collection<? extends V> c) {
         return false;
-    }
+    } ////???????
 
     public boolean addAll(int index, Collection<? extends V> c) {
         return false;
-    }
+    } ////???????
 
     public boolean removeAll(Collection<?> c) {
         return false;
-    }
+    } ////???????
 
     public boolean retainAll(Collection<?> c) {
         return false;
-    }
+    } ////???????
 
     public void clear() {
+
+        for (int i = 0; i < size; i++) {
+                elementData[i] = null;
+            }
 
     }
 
@@ -138,21 +150,21 @@ public class ArrayList2<V> implements List<V> {
 
     public int indexOf(Object o) {
         return 0;
-    }
+    } ////???????
 
     public int lastIndexOf(Object o) {
         return 0;
-    }
+    } ////???????
 
     public ListIterator<V> listIterator() {
         return null;
-    }
+    } ////???????
 
     public ListIterator<V> listIterator(int index) {
         return null;
-    }
+    } ////???????
 
     public List<V> subList(int fromIndex, int toIndex) {
         return null;
-    }
+    } ////???????
 }

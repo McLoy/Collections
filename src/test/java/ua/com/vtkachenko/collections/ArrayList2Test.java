@@ -152,10 +152,31 @@ public class ArrayList2Test {
     @Test
     public void testRemoveElementByIndex() throws Exception {
 
-        ArrayList2<String> arr = new ArrayList2<String>(3);
+        ArrayList2<String> arr = new ArrayList2<String>(2);
         arr.add("Tom");
         arr.add("Jerry");
         assertEquals("Jerry", arr.remove(1));
+
+    }
+
+    @Test
+    public void testRemoveElementByValue() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(2);
+        arr.add("Tom");
+        arr.add("Jerry");
+        assertTrue(arr.remove("Tom"));
+
+    }
+
+    @Test
+    public void testClear() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(2);
+        arr.add("Tom");
+        arr.add("Jerry");
+        arr.clear();
+        assertEquals(null, arr.get(1));
 
     }
 }
