@@ -55,4 +55,25 @@ public class ArrayList2Test {
         assertEquals(true, arr.contains(5));
 
     }
+
+    @Test
+    public void testArrayList2ContainsValueString() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(2);
+        arr.add("Test");
+        assertEquals(true, arr.contains("Test"));
+
+    }
+
+    @Test
+    public void testArrayList2AddFewValues() throws Exception {
+
+        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        for (int i = 0; i < 20; i++) {
+            arr.add(i+1);
+            System.out.println(arr.get(i) + ", ");
+        }
+        assertEquals(20, arr.size());
+
+    }
 }

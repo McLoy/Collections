@@ -64,11 +64,17 @@ public class ArrayList2<V> implements List<V> {
         //Добавляется значение в конец согласно значению size
             elementData[size++] = v;
             return true;}
-        else
-            return false;
+        else {
+            capacity = (capacity*3)/2 + 1;
+            V[] elementData1 = (V[]) new Object[capacity];
+            System.arraycopy(elementData, 0, elementData1, 0, elementData.length);
+            elementData = elementData1;
+            return true;
+        }
     }
 
     boolean ensureCapacity(int s){
+
         return s <= capacity;
     }
 
