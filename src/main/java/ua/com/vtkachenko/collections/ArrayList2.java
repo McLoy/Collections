@@ -59,22 +59,21 @@ public class ArrayList2<V> implements List<V> {
     public boolean add(V v) {
 
         //Достаточно ли места в массиве для вставки нового элемента
-        if (ensureCapacity(size + 1))
+        ensureCapacity(size + 1);
         //Добавляется значение в конец согласно значению size
-            elementData[size++] = v;
-        else {
+        elementData[size++] = v;
+        return true;
+
+    }
+
+    private void ensureCapacity(int s){
+
+        if (s > capacity){
             capacity = (capacity*3)/2 + 1;
             V[] oldData = elementData.clone();
             elementData = (V[]) new Object[capacity];
             System.arraycopy(oldData, 0, elementData, 0, size);
-            elementData[size++] = v;
         }
-        return true;
-    }
-
-    boolean ensureCapacity(int s){
-
-        return s <= capacity;
 
     }
 
@@ -108,27 +107,37 @@ public class ArrayList2<V> implements List<V> {
 
     public V get(int index) {
 
-        for (int i = 0; i < elementData.length; i++) {
-            if (i == index) return elementData[i];
-        }
+        return elementData[index];
 
-        return null;
     }
 
     public V set(int index, V element) {
-        return null;
+
+        elementData[index] = element;
+        return element;
+
     }
 
     public void add(int index, V element) {
 
-        if (index + 1 > size) {
-            throw new IndexOutOfBoundsException();
-        } else {
+        ensureCapacity(size + 1);
+        System.arraycopy(elementData, index, elementData, index + 1, size - index);
+        elementData[index] = element;
+        size++;
+//        if (ensureCapacity(size + 1)){
+//            System.arraycopy(elementData, index, elementData, index + 1, size - index);
+//            elementData[index] = element;
+//            size++;
+//        }
 
-            for (int i = 0; i < size; i++) {
-                if (i == index) elementData[i] = element;
-            }
-        }
+//        if (index + 1 > size) {
+//            throw new IndexOutOfBoundsException();
+//        } else {
+//
+//            for (int i = 0; i < size; i++) {
+//                if (i == index) elementData[i] = element;
+//            }
+//        }
 
     }
 

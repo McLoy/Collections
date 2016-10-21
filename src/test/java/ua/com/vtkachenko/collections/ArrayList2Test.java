@@ -109,4 +109,43 @@ public class ArrayList2Test {
         arr.add(30, 5);
 
     }
+
+    @Test
+    public void testAddToArrayList2FewValues() throws Exception {
+
+        ArrayList2<Integer> arr = new ArrayList2<Integer>(2);
+        int ind = 1;
+        arr.add(1);
+        arr.add(2);
+        for (int i = 0; i < 3; i++) {
+            arr.add(ind, ind + 8);
+            ind++;
+        }
+        assertEquals(11, arr.get(3).intValue());
+    }
+
+    @Test
+    public void testSetValue() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(3);
+        arr.add("Tom");
+        arr.add("Jerry");
+        arr.add("Bony");
+        arr.set(1,"Megan");
+        assertEquals("Megan", arr.get(1).toString());
+
+    }
+
+    @Test
+    public void testSetValue2() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>(3);
+        String word;
+        arr.add("Tom");
+        arr.add("Jerry");
+        arr.add("Bony");
+        word = arr.set(1,"Megan");
+        assertEquals("Megan", word);
+
+    }
 }
