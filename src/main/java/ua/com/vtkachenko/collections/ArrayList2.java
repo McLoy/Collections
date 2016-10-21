@@ -66,9 +66,10 @@ public class ArrayList2<V> implements List<V> {
             return true;}
         else {
             capacity = (capacity*3)/2 + 1;
-            V[] elementData1 = (V[]) new Object[capacity];
-            System.arraycopy(elementData, 0, elementData1, 0, elementData.length);
-            elementData = elementData1;
+            V[] oldData = elementData.clone();
+            V[] elementData = (V[]) new Object[capacity];
+            System.arraycopy(oldData, 0, elementData, 0, oldData.length);
+            elementData[size++] = v;
             return true;
         }
     }
