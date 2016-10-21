@@ -71,7 +71,6 @@ public class ArrayList2Test {
         ArrayList2<Integer> arr = new ArrayList2<Integer>();
         for (int i = 0; i < 20; i++) {
             arr.add(i+1);
-            System.out.println(arr.get(i) + ", ");
         }
         assertEquals(20, arr.size());
 

@@ -60,23 +60,23 @@ public class ArrayList2<V> implements List<V> {
     public boolean add(V v) {
 
         //Достаточно ли места в массиве для вставки нового элемента
-        if (ensureCapacity(size + 1)){
+        if (ensureCapacity(size + 1))
         //Добавляется значение в конец согласно значению size
             elementData[size++] = v;
-            return true;}
         else {
             capacity = (capacity*3)/2 + 1;
             V[] oldData = elementData.clone();
-            V[] elementData = (V[]) new Object[capacity];
-            System.arraycopy(oldData, 0, elementData, 0, oldData.length);
+            elementData = (V[]) new Object[capacity];
+            System.arraycopy(oldData, 0, elementData, 0, size);
             elementData[size++] = v;
-            return true;
         }
+        return true;
     }
 
     boolean ensureCapacity(int s){
 
         return s <= capacity;
+
     }
 
     public boolean remove(Object o) {
