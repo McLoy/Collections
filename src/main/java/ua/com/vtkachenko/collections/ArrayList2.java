@@ -106,8 +106,10 @@ public class ArrayList2<V> implements List<V> {
     } ////???????
 
     public boolean retainAll(Collection<?> c) {
-        return false;
-    } ////???????
+
+        throw new UnsupportedOperationException();
+
+    }
 
     public void clear() {
 
@@ -149,8 +151,12 @@ public class ArrayList2<V> implements List<V> {
     }
 
     public int indexOf(Object o) {
-        return 0;
-    } ////???????
+
+        for (int i = 0; i < size ; i++) {
+            if (elementData[i] == (V)o) return i;
+        }
+        return -1;
+    }
 
     public int lastIndexOf(Object o) {
 
@@ -161,14 +167,17 @@ public class ArrayList2<V> implements List<V> {
     }
 
     public ListIterator<V> listIterator() {
-        return null;
-    } ////???????
+        throw new UnsupportedOperationException();
+    }
 
     public ListIterator<V> listIterator(int index) {
-        return null;
-    } ////???????
+        throw new UnsupportedOperationException();
+    }
 
     public List<V> subList(int fromIndex, int toIndex) {
-        return null;
-    } ////???????
+
+        throw new UnsupportedOperationException();
+
+    }
+
 }
