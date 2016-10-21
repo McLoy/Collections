@@ -40,9 +40,18 @@ public class ArrayList2Test {
     }
 
     @Test
+    public void testAddToArrayList2() throws Exception {
+
+        ArrayList2<Integer> arr = new ArrayList2<Integer>(2);
+        assertTrue(arr.add(5));
+
+    }
+
+    @Test
     public void testArrayList2ContainsValue() throws Exception {
 
         ArrayList2<Integer> arr = new ArrayList2<Integer>(2);
+        arr.add(5);
         assertEquals(true, arr.contains(5));
 
     }

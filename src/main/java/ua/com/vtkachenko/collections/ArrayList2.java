@@ -27,7 +27,6 @@ public class ArrayList2<V> implements List<V> {
 
     }
 
-
     public int size() {
         return size;
     }
@@ -37,6 +36,12 @@ public class ArrayList2<V> implements List<V> {
     }
 
     public boolean contains(Object o) {
+
+        for (V el:elementData) {
+            if (el == (V)o)
+                return true;
+        };
+
         return false;
     }
 
@@ -53,7 +58,18 @@ public class ArrayList2<V> implements List<V> {
     }
 
     public boolean add(V v) {
-        return false;
+
+        //Достаточно ли места в массиве для вставки нового элемента
+        if (ensureCapacity(size + 1)){
+        //Добавляется значение в конец согласно значению size
+            elementData[size++] = v;
+            return true;}
+        else
+            return false;
+    }
+
+    boolean ensureCapacity(int s){
+        return s <= capacity;
     }
 
     public boolean remove(Object o) {
