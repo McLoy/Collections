@@ -7,7 +7,6 @@ import java.util.ListIterator;
 
 public class ArrayList2<V> implements List<V> {
 
-
     private int size;
     private V[] elementData;
     private int capacity = 0;
@@ -108,6 +107,11 @@ public class ArrayList2<V> implements List<V> {
     }
 
     public V get(int index) {
+
+        for (int i = 0; i < elementData.length; i++) {
+            if (i == index) return elementData[i];
+        }
+
         return null;
     }
 
@@ -116,6 +120,10 @@ public class ArrayList2<V> implements List<V> {
     }
 
     public void add(int index, V element) {
+
+        for (int i = 0; i < elementData.length; i++) {
+            if (i == index) elementData[i] = element;
+        }
 
     }
 

@@ -75,4 +75,27 @@ public class ArrayList2Test {
         assertEquals(20, arr.size());
 
     }
+
+    @Test
+    public void testGetElementByIndex() throws Exception {
+
+        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        for (int i = 0; i < 20; i++) {
+            arr.add(i);
+        }
+        assertEquals(5, arr.get(5).intValue());
+
+    }
+
+    @Test
+    public void testArrayList2AddValueFromSomePosition() throws Exception {
+
+        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        for (int i = 0; i < 20; i++) {
+            arr.add(i);
+        }
+        arr.add(19, 5);
+        assertEquals(5, arr.get(19).intValue());
+
+    }
 }
