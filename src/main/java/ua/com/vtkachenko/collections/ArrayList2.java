@@ -49,8 +49,10 @@ public class ArrayList2<V> implements List<V> {
     } ////???????
 
     public Object[] toArray() {
-        return new Object[0];
-    } ////???????
+
+        return (Object[]) elementData;
+
+    }
 
     public <T> T[] toArray(T[] a) {
         return null;

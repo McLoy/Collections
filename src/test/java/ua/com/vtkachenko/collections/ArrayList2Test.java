@@ -1,5 +1,7 @@
 package ua.com.vtkachenko.collections;
 
+import org.fest.assertions.Assertions;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -90,12 +92,12 @@ public class ArrayList2Test {
     @Test
     public void testArrayList2AddValueFromSomePosition() throws Exception {
 
-        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        ArrayList2<Integer> arr = new ArrayList2<>();
         for (int i = 0; i < 20; i++) {
             arr.add(i);
         }
         arr.add(19, 5);
-        assertEquals(5, arr.get(19).intValue());
+        Assertions.assertThat(arr.get(19)).isEqualTo(5);
 
     }
 
@@ -269,6 +271,33 @@ public class ArrayList2Test {
         arr.add("Jerry");
         arr.add("Miranda");
         assertEquals(0, arr.indexOf("Mark"));
+
+    }
+
+//    @Test
+//    public void testGetIterator() throws Exception {
+//
+//        ArrayList2 arr = new ArrayList2();
+//        Iterator i = arr.iterator();
+//
+//    }
+
+
+    @Test
+    public void testToArray() throws Exception {
+
+        ArrayList2<String> arr = new ArrayList2<String>();
+        arr.add("Mark");
+        arr.add("Jerry");
+        arr.add("Jerry");
+        arr.add("Tom");
+        arr.add("Jerry");
+        Object[] array = arr.toArray();
+//        System.out.println(array.toString());
+//        for (int i = 0; i < array.length; i++) {
+//            System.out.print(array[i] + ", ");
+//        }
+        assertEquals("Mark", array[0]);
 
     }
 }
