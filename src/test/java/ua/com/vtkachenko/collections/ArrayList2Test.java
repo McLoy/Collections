@@ -1,303 +1,235 @@
 package ua.com.vtkachenko.collections;
 
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.fest.assertions.Assertions;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.*;
 
+@RunWith(JUnitParamsRunner.class)
 public class ArrayList2Test {
 
-    @Test
-    public void testCreatingArrayList2() throws Exception {
+    private ArrayList2<Integer> sut;
 
-        ArrayList2 arr = new ArrayList2();
-        assertThat(arr, instanceOf(ArrayList2.class));
+    public static Object[][] params() {
+        return new Object[][]{
+                {8},
+                {-1},
+                {null},
+                {0},
+        };
+    }
 
+    @Before
+    public void setUp() throws Exception {
+        sut = new ArrayList2<>();
     }
 
     @Test
-    public void testCreatingArrayDefaultSize() throws Exception {
-
-        ArrayList2 arr = new ArrayList2();
-        assertEquals(0, arr.size());
-
+    public void Creating() throws Exception {
+        Assert.assertThat(sut, instanceOf(ArrayList2.class));
     }
 
     @Test
-    public void testCreatingArrayList2WithSomeCapacity() throws Exception {
-
-        ArrayList2 arr = new ArrayList2(2);
-        assertEquals(0, arr.size());
-
+    public void isItEmpty() throws Exception {
+        Assertions.assertThat(sut).isEmpty();
     }
 
     @Test
-    public void testWhrenArrayList2IsEmpty() throws Exception {
-
-        ArrayList2<Integer> arr = new ArrayList2<Integer>(2);
-        assertEquals(true, arr.isEmpty());
-
+    public void sizeZero() throws Exception {
+        Assertions.assertThat(sut).hasSize(0);
     }
 
     @Test
-    public void testAddToArrayList2() throws Exception {
-
-        ArrayList2<Integer> arr = new ArrayList2<Integer>(2);
-        assertTrue(arr.add(5));
-
+    public void containsValues() throws Exception {
+        sut.add(1);
+        sut.add(2);
+        Assertions.assertThat(sut).isNotEmpty();
+        Assertions.assertThat(sut).hasSize(2);
+        Assertions.assertThat(sut).contains(1, 2);
     }
 
     @Test
-    public void testArrayList2ContainsValue() throws Exception {
+    public void addValueInIndex() throws Exception {
+        sut.add(1);
+        sut.add(2);
+        sut.add(1, 5);
+        Assertions.assertThat(sut.get(1)).isEqualTo(5);
+        Assertions.assertThat(sut).hasSize(3);
+    }
 
-        ArrayList2<Integer> arr = new ArrayList2<Integer>(2);
-        arr.add(5);
-        assertEquals(true, arr.contains(5));
-
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void invalidIndexAdd() throws Exception {
+        sut.add(2, 5);
     }
 
     @Test
-    public void testArrayList2ContainsValueString() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Test");
-        assertEquals(true, arr.contains("Test"));
-
-    }
-
-    @Test
-    public void testArrayList2AddFewValues() throws Exception {
-
-        ArrayList2<Integer> arr = new ArrayList2<Integer>();
-        for (int i = 0; i < 20; i++) {
-            arr.add(i+1);
-        }
-        assertEquals(20, arr.size());
-
-    }
-
-    @Test
-    public void testGetElementByIndex() throws Exception {
-
-        ArrayList2<Integer> arr = new ArrayList2<Integer>();
-        for (int i = 0; i < 20; i++) {
-            arr.add(i);
-        }
-        assertEquals(5, arr.get(5).intValue());
-
-    }
-
-    @Test
-    public void testArrayList2AddValueFromSomePosition() throws Exception {
-
-        ArrayList2<Integer> arr = new ArrayList2<>();
-        for (int i = 0; i < 20; i++) {
-            arr.add(i);
-        }
-        arr.add(19, 5);
-        Assertions.assertThat(arr.get(19)).isEqualTo(5);
-
-    }
-
-    @Test (expected = IndexOutOfBoundsException.class)
-    public void testArrayList2AddValueFromOutOfBoundsPosition() throws Exception {
-
-        ArrayList2<Integer> arr = new ArrayList2<Integer>();
-        for (int i = 0; i < 20; i++) {
-            arr.add(i);
-        }
-        arr.add(30, 5);
-
-    }
-
-    @Test
-    public void testAddToArrayList2FewValues() throws Exception {
-
-        ArrayList2<Integer> arr = new ArrayList2<Integer>(2);
-        int ind = 1;
-        arr.add(1);
-        arr.add(2);
-        for (int i = 0; i < 3; i++) {
-            arr.add(ind, ind + 8);
-            ind++;
-        }
-        assertEquals(11, arr.get(3).intValue());
-    }
-
-    @Test
-    public void testSetValue() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(3);
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Bony");
-        arr.set(1,"Megan");
-        assertEquals("Megan", arr.get(1).toString());
-
+    @Parameters(method = "params")
+    public void setValue(Integer value) throws Exception {
+        sut.add(value);
+        Assertions.assertThat(sut.get(0)).isEqualTo(value);
     }
 
     @Test
     public void testSetValue2() throws Exception {
 
-        ArrayList2<String> arr = new ArrayList2<String>(3);
-        String word;
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Bony");
-        word = arr.set(1,"Megan");
-        assertEquals("Megan", word);
+//
+//        String word;
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Bony");
+//        word = sut.set(1, "Megan");
+//        assertEquals("Megan", word);
 
     }
 
     @Test
     public void testRemoveElementByIndex() throws Exception {
 
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Tom");
-        arr.add("Jerry");
-        assertEquals("Jerry", arr.remove(1));
+
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        assertEquals("Jerry", sut.remove(1));
 
     }
 
     @Test
     public void testRemoveElementByValue() throws Exception {
 
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Tom");
-        arr.add("Jerry");
-        assertTrue(arr.remove("Tom"));
+
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        assertTrue(sut.remove("Tom"));
 
     }
 
     @Test
     public void testClear() throws Exception {
 
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.clear();
-        assertEquals(null, arr.get(1));
 
-    }
-
-    @Test
-    public void testLastIndexOfValue() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Jerry");
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Miranda");
-        assertEquals(-1, arr.lastIndexOf("Hose"));
-
-    }
-
-    @Test
-    public void testLastIndexOfValue2() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Mark");
-        arr.add("Jerry");
-        arr.add("Jerry");
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Miranda");
-        assertEquals(0, arr.lastIndexOf("Mark"));
-
-    }
-
-    @Test
-    public void testLastIndexOfValue3() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Mark");
-        arr.add("Jerry");
-        arr.add("Jerry");
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Miranda");
-        assertEquals(5, arr.lastIndexOf("Miranda"));
-
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testRetainAll() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.retainAll(new ArrayList2<Object>());
-
-    }
-
-    @Test
-    public void testIndexOf() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Mark");
-        arr.add("Jerry");
-        arr.add("Jerry");
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Miranda");
-        assertEquals(5, arr.indexOf("Miranda"));
-
-    }
-
-    @Test
-    public void testIndexOf2() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Mark");
-        arr.add("Jerry");
-        arr.add("Jerry");
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Miranda");
-        assertEquals(-1, arr.indexOf("Hose"));
-
-    }
-
-    @Test
-    public void testIndexOf3() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>(2);
-        arr.add("Mark");
-        arr.add("Jerry");
-        arr.add("Jerry");
-        arr.add("Tom");
-        arr.add("Jerry");
-        arr.add("Miranda");
-        assertEquals(0, arr.indexOf("Mark"));
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.clear();
+//        assertEquals(null, sut.get(1));
 
     }
 
 //    @Test
+//    public void testLastIndexOfValue() throws Exception {
+//
+//
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Jerry");
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Miranda");
+//        assertEquals(-1, sut.lastIndexOf("Hose"));
+//
+//    }
+//
+//    @Test
+//    public void testLastIndexOfValue2() throws Exception {
+//
+//
+//        sut.add("Mark");
+//        sut.add("Jerry");
+//        sut.add("Jerry");
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Miranda");
+//        assertEquals(0, sut.lastIndexOf("Mark"));
+//
+//    }
+//
+//    @Test
+//    public void testLastIndexOfValue3() throws Exception {
+//
+//
+//        sut.add("Mark");
+//        sut.add("Jerry");
+//        sut.add("Jerry");
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Miranda");
+//        assertEquals(5, sut.lastIndexOf("Miranda"));
+//
+//    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testRetainAll() throws Exception {
+        sut.retainAll(new ArrayList2<Object>());
+    }
+
+//    @Test
+//    public void testIndexOf() throws Exception {
+//
+//
+//        sut.add("Mark");
+//        sut.add("Jerry");
+//        sut.add("Jerry");
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Miranda");
+//        assertEquals(5, sut.indexOf("Miranda"));
+//
+//    }
+//
+//    @Test
+//    public void testIndexOf2() throws Exception {
+//
+//
+//        sut.add("Mark");
+//        sut.add("Jerry");
+//        sut.add("Jerry");
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Miranda");
+//        assertEquals(-1, sut.indexOf("Hose"));
+//
+//    }
+//
+//    @Test
+//    public void testIndexOf3() throws Exception {
+//
+//
+//        sut.add("Mark");
+//        sut.add("Jerry");
+//        sut.add("Jerry");
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        sut.add("Miranda");
+//        assertEquals(0, sut.indexOf("Mark"));
+//
+//    }
+
+//    @Test
 //    public void testGetIterator() throws Exception {
 //
-//        ArrayList2 arr = new ArrayList2();
-//        Iterator i = arr.iterator();
+//        ArrayList2 sut = new ArrayList2();
+//        Iterator i = sut.iterator();
 //
 //    }
 
 
-    @Test
-    public void testToArray() throws Exception {
-
-        ArrayList2<String> arr = new ArrayList2<String>();
-        arr.add("Mark");
-        arr.add("Jerry");
-        arr.add("Jerry");
-        arr.add("Tom");
-        arr.add("Jerry");
-        Object[] array = arr.toArray();
-//        System.out.println(array.toString());
-//        for (int i = 0; i < array.length; i++) {
-//            System.out.print(array[i] + ", ");
-//        }
-        assertEquals("Mark", array[0]);
-
-    }
+//    @Test
+//    public void testToArray() throws Exception {
+//
+//        sut.add("Mark");
+//        sut.add("Jerry");
+//        sut.add("Jerry");
+//        sut.add("Tom");
+//        sut.add("Jerry");
+//        Object[] array = sut.toArray();
+////        System.out.println(array.toString());
+////        for (int i = 0; i < array.length; i++) {
+////            System.out.print(array[i] + ", ");
+////        }
+//        assertEquals("Mark", array[0]);
+//
+//    }
 }
