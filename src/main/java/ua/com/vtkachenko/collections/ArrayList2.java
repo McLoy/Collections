@@ -61,6 +61,7 @@ public class ArrayList2<T> implements List<T> {
             throw new NoSuchElementException();
         }
     }
+
     public Iterator<T> iterator() {
         return new ArrayList2Iterator<>();
     }
@@ -73,7 +74,7 @@ public class ArrayList2<T> implements List<T> {
 
     public <Z> Z[] toArray(Z[] a) {
         return (Z[]) elementData;
-    } ////???????
+    }
 
     public boolean add(T v) {
 
@@ -131,11 +132,9 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public void clear() {
-
-        for (int i = 0; i < size; i++) {
-            elementData[i] = null;
-        }
-
+        size = DEFAULT_CAPACITY;
+        capacity = DEFAULT_CAPACITY;
+        elementData = (T[]) new Object[DEFAULT_CAPACITY];
     }
 
     public T get(int index) {
