@@ -67,9 +67,7 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public Object[] toArray() {
-
         return (Object[]) elementData;
-
     }
 
     public <Z> Z[] toArray(Z[] a) {
@@ -77,19 +75,16 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public boolean add(T v) {
-
-        //Достаточно ли места в массиве для вставки нового элемента
         ensureCapacity(size + 1);
-        //Добавляется значение в конец согласно значению size
         elementData[size++] = v;
         return true;
-
     }
 
     private void ensureCapacity(int s) {
 
         if (s > capacity) {
-            capacity = (capacity * 3) / 2 + 1;
+            while (s > capacity){
+            capacity = (capacity * 3) / 2 + 1;}
             T[] oldData = elementData.clone();
             elementData = (T[]) new Object[capacity];
             System.arraycopy(oldData, 0, elementData, 0, size);
@@ -110,12 +105,32 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public boolean containsAll(Collection<?> c) {
+        if (!c.isEmpty()) {
+            boolean contains = false;
+            for (Object el2 : c) {
+                for (T el1 : elementData) {
+                    if (el1 != null) {
+                        contains = el1.equals(el2);
+                        if (contains) break;
+                    } else {
+                        contains = el1 == el2;
+                        if (contains) break;
+                    }
+                }
+                if (!contains) return false;
+            }
+            if (contains) return true;}
         return false;
-    } ////???????
+    }
 
     public boolean addAll(Collection<? extends T> c) {
+        if (!c.isEmpty()){
+            ensureCapacity(size + c.size());
+            System.arraycopy(c.toArray(), 0, elementData, size, c.size());
+            return true;
+        }
         return false;
-    } ////???????
+    }
 
     public boolean addAll(int index, Collection<? extends T> c) {
         return false;
@@ -138,29 +153,22 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public T get(int index) {
-
         return elementData[index];
-
     }
 
     public T set(int index, T element) {
-
         elementData[index] = element;
         return element;
-
     }
 
     public void add(int index, T element) {
-
         ensureCapacity(size + 1);
         System.arraycopy(elementData, index, elementData, index + 1, size - index);
         elementData[index] = element;
         size++;
-
     }
 
     public T remove(int index) {
-
         T deletedElement = elementData[index];
         int numMoved = size - index - 1;
         System.arraycopy(elementData, index + 1, elementData, index, numMoved);
@@ -169,7 +177,6 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public int indexOf(Object o) {
-
         for (int i = 0; i < size; i++) {
             if (elementData[i] == (T) o) return i;
         }
@@ -177,7 +184,6 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public int lastIndexOf(Object o) {
-
         for (int i = size - 1; i >= 0; i--) {
             if (elementData[i] == (T) o) return i;
         }

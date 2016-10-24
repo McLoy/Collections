@@ -4,9 +4,6 @@ import org.junit.*;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.fest.assertions.Assertions;
-//import org.junit.Assert;
-//import org.junit.Before;
-//import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -33,25 +30,23 @@ public class ArrayList2Test {
     @Test
     public void creating() throws Exception {
         Assert.assertThat(sut, instanceOf(ArrayList2.class));
+        ArrayList2 arr = new ArrayList2(4);
+        Assert.assertThat(arr, instanceOf(ArrayList2.class));
     }
 
     @Test
     public void isItEmpty() throws Exception {
         Assertions.assertThat(sut).isEmpty();
-    }
-
-    @Test
-    public void sizeZero() throws Exception {
         Assertions.assertThat(sut).hasSize(0);
     }
 
     @Test
     public void containsValues() throws Exception {
         sut.add(1);
-        sut.add(2);
+        sut.add(null);
         Assertions.assertThat(sut).isNotEmpty();
         Assertions.assertThat(sut).hasSize(2);
-        Assertions.assertThat(sut).contains(1, 2);
+        Assertions.assertThat(sut.contains(1)).isTrue();
     }
 
     @Test
@@ -142,5 +137,30 @@ public class ArrayList2Test {
         sut.add(1);
         sut.add(2);
         Assertions.assertThat(sut.toArray()[1]).isEqualTo(2);
+    }
+
+    @Test
+    public void containsAll() throws Exception {
+        sut.add(1);
+        sut.add(2);
+        sut.add(3);
+        sut.add(4);
+
+        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        arr.add(3);
+        arr.add(1);
+
+        Assertions.assertThat(sut.containsAll(arr)).isTrue();
+    }
+
+    @Test
+    public void addAll() throws Exception {
+        sut.add(4);
+        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        arr.add(3);
+        arr.add(1);
+        arr.add(4);
+        arr.add(2);
+        Assertions.assertThat(sut.addAll(arr)).isTrue();
     }
 }
