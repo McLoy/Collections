@@ -130,19 +130,19 @@ public class ArrayList2<T> implements List<T> {
 
     public boolean addAll(int index, Collection<? extends T> c) {
         if (!c.isEmpty()){
-            T[] partOfArray = (T[]) new Object[elementData.length];
-            int pos = size;
             if (index != 0) {
-                pos = index;
                 int countEl = size-index;
-                partOfArray = (T[]) new Object[countEl];
+                T[] partOfArray = (T[]) new Object[countEl];
                 System.arraycopy(elementData, index, partOfArray, 0, countEl);
-            }
-            ensureCapacity(size + c.size());
-            System.arraycopy(c.toArray(), 0, elementData, pos, c.size());
-            size += c.size();
-            if (index != 0){
-                System.arraycopy(partOfArray, 0, elementData, pos + c.size(), partOfArray.length);
+                ensureCapacity(size + c.size());
+                System.arraycopy(c.toArray(), 0, elementData, index, c.size());
+                size += c.size();
+                System.arraycopy(partOfArray, 0, elementData, index + c.size(), partOfArray.length);
+            } else {
+                int countVal = elementData.length;
+                ensureCapacity(size + c.size());
+                System.arraycopy(c.toArray(), 0, elementData, countVal, c.size());
+                size += c.size();
             }
             return true;
         }
