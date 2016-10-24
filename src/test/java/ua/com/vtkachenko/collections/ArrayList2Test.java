@@ -1,9 +1,11 @@
 package ua.com.vtkachenko.collections;
 
-import org.junit.*;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.fest.assertions.Assertions;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -155,12 +157,16 @@ public class ArrayList2Test {
 
     @Test
     public void addAll() throws Exception {
+        sut.add(1);
+        sut.add(2);
+        sut.add(3);
         sut.add(4);
         ArrayList2<Integer> arr = new ArrayList2<Integer>();
-        arr.add(3);
-        arr.add(1);
-        arr.add(4);
-        arr.add(2);
+        arr.add(5);
+        arr.add(6);
+        arr.add(7);
+        arr.add(8);
         Assertions.assertThat(sut.addAll(arr)).isTrue();
+        Assertions.assertThat(sut.addAll(1, arr)).isTrue();
     }
 }
