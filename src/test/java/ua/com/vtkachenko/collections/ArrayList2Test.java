@@ -168,5 +168,18 @@ public class ArrayList2Test {
         arr.add(8);
         Assertions.assertThat(sut.addAll(arr)).isTrue();
         Assertions.assertThat(sut.addAll(1, arr)).isTrue();
+        Assertions.assertThat(sut.addAll(-1, arr)).isFalse();
+    }
+
+    @Test
+    public void removeAll() throws Exception {
+        sut.add(1);
+        sut.add(2);
+        sut.add(3);
+        sut.add(4);
+        ArrayList2<Integer> arr = new ArrayList2<Integer>();
+        arr.add(2);
+        arr.add(3);
+        Assertions.assertThat(sut.removeAll(arr)).isTrue();
     }
 }

@@ -130,28 +130,36 @@ public class ArrayList2<T> implements List<T> {
 
     public boolean addAll(int index, Collection<? extends T> c) {
         if (!c.isEmpty()){
-            if (index != 0) {
-                int countEl = size-index;
-                T[] partOfArray = (T[]) new Object[countEl];
-                System.arraycopy(elementData, index, partOfArray, 0, countEl);
-                ensureCapacity(size + c.size());
-                System.arraycopy(c.toArray(), 0, elementData, index, c.size());
-                size += c.size();
-                System.arraycopy(partOfArray, 0, elementData, index + c.size(), partOfArray.length);
-            } else {
-                int countVal = elementData.length;
-                ensureCapacity(size + c.size());
-                System.arraycopy(c.toArray(), 0, elementData, countVal, c.size());
-                size += c.size();
+            if (index >= 0) {
+                if (index > 0) {
+                    int countEl = size - index;
+                    T[] partOfArray = (T[]) new Object[countEl];
+                    System.arraycopy(elementData, index, partOfArray, 0, countEl);
+                    ensureCapacity(size + c.size());
+                    System.arraycopy(c.toArray(), 0, elementData, index, c.size());
+                    size += c.size();
+                    System.arraycopy(partOfArray, 0, elementData, index + c.size(), partOfArray.length);
+                } else if (index == 0) {
+                    int countVal = elementData.length;
+                    ensureCapacity(size + c.size());
+                    System.arraycopy(c.toArray(), 0, elementData, countVal, c.size());
+                    size += c.size();
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
 
     public boolean removeAll(Collection<?> c) {
+        if (!c.isEmpty()) {
+            for (Object el: c) {
+                remove(el);
+            }
+            return true;
+        }
         return false;
-    } ////???????
+    }
 
     public boolean retainAll(Collection<?> c) {
 
