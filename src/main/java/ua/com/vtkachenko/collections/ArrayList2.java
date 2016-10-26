@@ -93,14 +93,12 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public boolean remove(Object o) {
-
         for (int i = 0; i < size; i++) {
             if (elementData[i] == (T) o) {
                 remove(i);
                 return true;
             }
         }
-
         return false;
     }
 
@@ -162,9 +160,7 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public boolean retainAll(Collection<?> c) {
-
         throw new UnsupportedOperationException();
-
     }
 
     public void clear() {
@@ -220,9 +216,7 @@ public class ArrayList2<T> implements List<T> {
     }
 
     public List<T> subList(int fromIndex, int toIndex) {
-
         throw new UnsupportedOperationException();
-
     }
 
 }
