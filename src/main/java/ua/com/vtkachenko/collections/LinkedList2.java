@@ -16,7 +16,6 @@ public class LinkedList2<T> implements List<T> {
         header.next = header.prev = header;
     }
 
-    //class Entry created for creating new elements
     private static class Entry<T>
     {
         T element;
@@ -38,17 +37,46 @@ public class LinkedList2<T> implements List<T> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     @Override
     public boolean contains(Object o) {
+        Entry<T> elem = header.next;
+        for (int i = 0; i < size; i++) {
+            if (o == null){
+                if (elem.element == null)
+                    return true;
+            } else {
+                if (elem.element == o)
+                    return true;
+            }
+            elem = elem.next;
+        }
         return false;
+    }
+
+    private class LinkedList2Iterator<T> implements Iterator<T>{
+
+        private Entry<T> cursor = header.next;
+        @Override
+        public boolean hasNext() {
+            return cursor.next != cursor;//index < size;
+        }
+
+        @Override
+        public T next() {
+            if (cursor.next != cursor){
+                cursor = cursor.next;
+                return cursor.prev.element;
+            }
+            return null;
+        }
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new LinkedList2Iterator<>();
     }
 
     @Override
@@ -63,13 +91,11 @@ public class LinkedList2<T> implements List<T> {
 
     @Override
     public boolean add(T t) {
-
         Entry newEntry = new Entry(t, header, header.prev);
         newEntry.prev.next = newEntry;
         newEntry.next.prev = newEntry;
         size++;
         return size > 0;
-
     }
 
     @Override
