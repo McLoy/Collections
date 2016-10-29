@@ -7,6 +7,7 @@ import java.util.Set;
 public class HashMap2<K,V> implements Map<K,V>{
 
     public static final int DEFAULT_CAPACITY = 16;
+    public static final double DEFAULT_LOADFACTOR = 0.75;
     private Entry[] table;
     private double loadFactor = 0.75, threshold;
     private int size, capacity = DEFAULT_CAPACITY;
@@ -15,11 +16,10 @@ public class HashMap2<K,V> implements Map<K,V>{
         this(DEFAULT_CAPACITY);
     }
     public HashMap2(int capacity){
-        size = 0;
-        table = new Entry[capacity];
-        threshold = thresholdCalc();
+        this(capacity, DEFAULT_LOADFACTOR);
     }
     public HashMap2(int capacity, double loadFactor){
+        if (capacity > Integer.MAX_VALUE/2 + 1) throw new IllegalArgumentException();
         this.loadFactor = loadFactor;
         this.table = new Entry[capacity];
         this.size = 0;

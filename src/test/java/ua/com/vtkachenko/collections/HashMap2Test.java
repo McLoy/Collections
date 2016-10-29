@@ -17,4 +17,9 @@ public class HashMap2Test {
     public void isEmpty() throws Exception{
         Assertions.assertThat(sut).isEmpty();
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void defineCapacity() throws Exception {
+        HashMap2<String, String> hmWithCapacity = new HashMap2<>(1073741825);
+    }
 }
