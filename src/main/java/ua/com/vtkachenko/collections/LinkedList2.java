@@ -58,17 +58,17 @@ public class LinkedList2<T> implements List<T> {
 
     private class LinkedList2Iterator<T> implements Iterator<T>{
 
-        private Entry<T> cursor = header.next;
+        private Entry<T> cursor = header;
         @Override
         public boolean hasNext() {
-            return cursor.next != cursor;//index < size;
+            return cursor.next != header && cursor.next != cursor;
         }
 
         @Override
         public T next() {
-            if (cursor.next != cursor){
+            if (cursor.next != header && cursor.next != cursor){
                 cursor = cursor.next;
-                return cursor.prev.element;
+                return cursor.element;
             }
             return null;
         }
@@ -81,12 +81,18 @@ public class LinkedList2<T> implements List<T> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] arr = new Object[size];
+        Iterator it = iterator();
+        int count = 0;
+        while (it.hasNext()){
+            arr[count++] = it.next();
+        }
+        return arr;
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        return (T[])toArray();
     }
 
     @Override
@@ -100,81 +106,214 @@ public class LinkedList2<T> implements List<T> {
 
     @Override
     public boolean remove(Object o) {
+        Entry<T> elem = header.next;
+        for (int i = 0; i < size; i++) {
+            if (o == null){
+                if (elem.element == null){
+                    clearInnerLinks(elem);
+                    return true;
+                }
+            } else {
+                if (elem.element == o){
+                    clearInnerLinks(elem);
+                    return true;
+                }
+            }
+            elem = elem.next;
+        }
         return false;
+    }
+
+    private void clearInnerLinks(Entry<T> x){
+        x.prev.next = x.next;
+        x.next.prev = x.prev;
+        x.next = null;
+        x.prev = null;
+        x.element = null;
+        size--;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        T[] arr = (T[]) c.toArray();
+        boolean flag = false;
+            for (int j = 0; j < arr.length; j++) {
+                if (contains(arr[j])) {
+                    flag = true;
+                } else
+                    flag = false;
+            }
+        return flag;
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return false;
+        boolean flag = false;
+        for (T el:c) {
+            Entry newEntry = new Entry(el, header, header.prev);
+            newEntry.prev.next = newEntry;
+            newEntry.next.prev = newEntry;
+            size++;
+            flag = true;
+        }
+        return flag;
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        return false;
+        boolean flag = false;
+        Entry curr = entry(index);
+        for (T el:c) {
+            Entry newEntry = new Entry(el, curr, curr.prev);
+            newEntry.prev.next = newEntry;
+            newEntry.next.prev = newEntry;
+            size++;
+            flag = true;
+        }
+        return flag;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean flag = false;
+        int length = size;
+        Entry<T> elem = header.next;
+        T[] arr = (T[]) c.toArray();
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < c.size(); j++) {
+                if (arr[j] == null) {
+                    if (elem.element == null) {
+                        elem = elem.next;
+                        clearInnerLinks(elem.prev);
+                        flag = true;
+                        continue;
+                    }
+                } else {
+                    if (elem.element == arr[j]) {
+                        elem = elem.next;
+                        clearInnerLinks(elem.prev);
+                        flag = true;
+                        continue;
+                    }
+                }
+            }
+        }
+        return flag;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-
+        Iterator it = iterator();
+        while (it.hasNext()){
+            remove(0);
+        }
     }
 
     @Override
     public T get(int index) {
-        return null;
+        return entry(index).element;
     }
 
     @Override
     public T set(int index, T element) {
-        return null;
+        Entry newEntry = entry(index);
+        newEntry.element = element;
+        return element;
     }
 
     @Override
     public void add(int index, T element) {
+        Entry entry = (index == size ? header : entry(index));
+        Entry newEntry = new Entry(element, entry, entry.prev);
+        newEntry.prev.next = newEntry;
+        newEntry.next.prev = newEntry;
+        size++;
+    }
 
+    private Entry<T> entry(int index){
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
+        Entry<T> e = header;
+        if (index < (size >> 1)){
+            for (int i = 0; i <= index; i++)
+                e = e.next;
+        }
+        else {
+            for (int i = size; i > index; i--)
+                e = e.prev;
+        }
+        return e;
     }
 
     @Override
     public T remove(int index) {
-        return null;
+        Entry entry = (index == size ? header : entry(index));
+        T value = (T)entry.element;
+        clearInnerLinks(entry);
+        return value;
     }
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        Entry<T> elem = header.next;
+        for (int i = 0; i < size; i++) {
+            if (o == null){
+                if (elem.element == null){
+                    return i;
+                }
+            } else {
+                if (elem.element == o){
+                    return i;
+                }
+            }
+            elem = elem.next;
+        }
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        Entry<T> elem = header.prev;
+        for (int i = size - 1; i > 0; i--) {
+            if (o == null){
+                if (elem.element == null){
+                    return i;
+                }
+            } else {
+                if (elem.element == o){
+                    return i;
+                }
+            }
+            elem = elem.prev;
+        }
+        return -1;
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        return null;
+        Entry<T> elem = header.next;
+        int length = size;
+        for (int i = 0; i < length; i++) {
+            elem = elem.next;
+            if (i < fromIndex || i >= toIndex){
+                    clearInnerLinks(elem.prev);
+                }
+        }
+        return this;
     }
 }
