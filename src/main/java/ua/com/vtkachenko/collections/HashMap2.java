@@ -7,6 +7,7 @@ import java.util.Set;
 public class HashMap2<K,V> implements Map<K,V> {
 
     public static final int DEFAULT_CAPACITY = 16;
+    public static final int MAXIMUM_CAPACITY = Integer.MAX_VALUE/2;
     public static final double DEFAULT_LOADFACTOR = 0.75;
     private MyEntry<K,V>[] table;
     private double loadFactor, threshold;
@@ -43,6 +44,23 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     private double thresholdCalc(){
         return capacity*loadFactor;
+    }
+
+    void resize(int newCapacity){
+//        if (table.length == MAXIMUM_CAPACITY){
+//            threshold = Integer.MAX_VALUE;
+//            return;
+//        }
+//        MyEntry[] newTable = new MyEntry[newCapacity];
+//        transfer(newTable);
+//        table = newTable;
+//        threshold = (int)(newCapacity * loadFactor);
+    }
+
+    void transfer(MyEntry<V,K>[] tabl){
+//        for (int i = 0; i < tabl.length; i++) {
+//
+//        }
     }
 
     @Override
@@ -87,7 +105,12 @@ public class HashMap2<K,V> implements Map<K,V> {
                 if (e.hash == hash && (e.key == key || key.equals(e.key))) {
                     V oldValue = e.value;
                     e.next = p;
+                    size++;
                     return oldValue;
+                } else {
+                    table[pos] = new MyEntry<K,V>(hash, key, value, table[pos]);
+                    size++;
+                    return null;
                 }
             }
             addEntry(hash, key, value, pos);
@@ -111,7 +134,15 @@ public class HashMap2<K,V> implements Map<K,V> {
     }
 
     private void putForNullKey(V value) {
-        addEntry(0, null, value, 0);
+        MyEntry<K,V> e = table[0];
+        if (e != null){
+            MyEntry<K,V> p = new MyEntry<>(0, null, value, null);
+            while (e.next != null) e = e.next;
+            e.next = p;
+            size++;
+        } else {
+            addEntry(0, null, value, 0);
+        }
     }
 
     @Override

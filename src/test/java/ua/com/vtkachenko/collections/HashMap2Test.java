@@ -28,7 +28,6 @@ public class HashMap2Test {
 //        HashMap2<String, String> hm2 = new HashMap2<>(1073741824);
 //    }
 
-
     @Test
     public void put() throws Exception {
         sut.put("0", "zero");
@@ -36,6 +35,10 @@ public class HashMap2Test {
         sut.put(null, null);
         sut.put("0", "2-zero");
         sut.put("0", "3-zero");
+        sut.put(null, "Surprise");
+        sut.put(null, "2-Surprise");
         Assertions.assertThat(sut).isNotEmpty();
+        Assertions.assertThat(sut).hasSize(7);
+        sut.put("idx", "two");
     }
 }
