@@ -19,7 +19,23 @@ public class HashMap2Test {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void defineCapacity() throws Exception {
-        HashMap2<String, String> hmWithCapacity = new HashMap2<>(1073741825);
+    public void defineCapacityException() throws Exception {
+        HashMap2<String, String> hm1 = new HashMap2<>(1073741825);
+    }
+
+//    @Test
+//    public void defineCapacity() throws Exception {
+//        HashMap2<String, String> hm2 = new HashMap2<>(1073741824);
+//    }
+
+
+    @Test
+    public void put() throws Exception {
+        sut.put("0", "zero");
+        sut.put("key", "one");
+        sut.put(null, null);
+        sut.put("0", "2-zero");
+        sut.put("0", "3-zero");
+        Assertions.assertThat(sut).isNotEmpty();
     }
 }
