@@ -10,7 +10,7 @@ public class LinkedList2<T> implements List<T> {
     private int size;
     private Entry header;
 
-    LinkedList2(){
+    public LinkedList2(){
         size = 0;
         header = new Entry(null, header, header);
         header.next = header.prev = header;
@@ -84,6 +84,10 @@ public class LinkedList2<T> implements List<T> {
         Object[] arr = new Object[size];
         Iterator it = iterator();
         int count = 0;
+//        for (T t :this) {
+//            arr[count++] = t;
+//        }
+
         while (it.hasNext()){
             arr[count++] = it.next();
         }

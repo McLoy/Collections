@@ -47,20 +47,20 @@ public class HashMap2<K,V> implements Map<K,V> {
     }
 
     void resize(int newCapacity){
-//        if (table.length == MAXIMUM_CAPACITY){
-//            threshold = Integer.MAX_VALUE;
-//            return;
-//        }
-//        MyEntry[] newTable = new MyEntry[newCapacity];
-//        transfer(newTable);
-//        table = newTable;
-//        threshold = (int)(newCapacity * loadFactor);
+        if (table.length == MAXIMUM_CAPACITY){
+            threshold = Integer.MAX_VALUE;
+            return;
+        }
+        MyEntry[] newTable = new MyEntry[newCapacity];
+        transfer(newTable);
+        table = newTable;
+        threshold = (int)(newCapacity * loadFactor);
     }
 
     void transfer(MyEntry<V,K>[] tabl){
-//        for (int i = 0; i < tabl.length; i++) {
-//
-//        }
+        for (MyEntry<V,K> e:tabl) {
+
+        }
     }
 
     @Override
