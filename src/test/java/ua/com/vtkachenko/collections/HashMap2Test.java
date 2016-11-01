@@ -23,11 +23,6 @@ public class HashMap2Test {
         HashMap2<String, String> hm1 = new HashMap2<>(1073741825);
     }
 
-//    @Test
-//    public void defineCapacity() throws Exception {
-//        HashMap2<String, String> hm2 = new HashMap2<>(1073741824);
-//    }
-
     @Test
     public void put() throws Exception {
         sut.put("0", "zero");
