@@ -1,6 +1,7 @@
 package ua.com.vtkachenko.collections;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,9 +11,9 @@ public class HashMap2<K,V> implements Map<K,V> {
     public static final int MAXIMUM_CAPACITY = Integer.MAX_VALUE/2;
     public static final double DEFAULT_LOADFACTOR = 0.75;
     private MyEntry<K,V>[] table;
-    private double loadFactor, threshold;
+    private double loadFactor;
     private int capacity = DEFAULT_CAPACITY;
-    private int size;
+    private int size, threshold;
 
     public HashMap2(){
         this(DEFAULT_CAPACITY);
@@ -21,11 +22,14 @@ public class HashMap2<K,V> implements Map<K,V> {
         this(capacity, DEFAULT_LOADFACTOR);
     }
     public HashMap2(int capacity, double loadFactor){
-        if (capacity > Integer.MAX_VALUE/2 + 1) throw new IllegalArgumentException();
+        this.capacity = capacity;
         this.loadFactor = loadFactor;
         this.table = new MyEntry[capacity];
         this.size = 0;
         this.threshold = thresholdCalc();
+        if (capacity != DEFAULT_CAPACITY){
+            resize(capacity);
+        }
     }
 
     private static class MyEntry<K,V>{
@@ -42,8 +46,34 @@ public class HashMap2<K,V> implements Map<K,V> {
         }
     }
 
-    private double thresholdCalc(){
-        return capacity*loadFactor;
+    private class HashMap2Iterator implements Iterator<MyEntry<K,V>> {
+
+        private int index = 0;
+
+        @Override
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        @Override
+        public MyEntry<K,V> next() {
+            int ind = 0;
+            for (MyEntry<K,V> curr: table) {
+                if (ind == index){
+                    index++;
+                    return curr;
+                }
+            }
+            return null;
+        }
+    }
+
+    private Iterator<MyEntry<K,V>> iterator(){
+        return new HashMap2Iterator();
+    }
+
+    private int thresholdCalc(){
+        return (int)(capacity*loadFactor);
     }
 
     void resize(int newCapacity){
@@ -57,10 +87,41 @@ public class HashMap2<K,V> implements Map<K,V> {
         threshold = (int)(newCapacity * loadFactor);
     }
 
-    void transfer(MyEntry<V,K>[] tabl){
-        for (MyEntry<V,K> e:tabl) {
+    void transfer(MyEntry<K,V>[] tabl){
+//        Iterator<MyEntry<K,V>> it = iterator();
+//        MyEntry<K,V>[] newTable = new MyEntry[capacity];
+//        while (it.hasNext()){
+//            MyEntry<K,V> elem = it.next();
+//            K key = elem.key;
+//            V value = elem.value;
+//
+//            if (key == null){
+//                putForNullKey(value);
+//            } else {
+//                int kh = key.hashCode();
+//                int hash = hash(kh);
+//                int tableLength = table.length;
+//                int pos = indexFor(hash, tableLength);
+//                MyEntry<K,V> e = table[pos];
+//                if (e != null) {
+//                    while (e.next != null) e = e.next;
+//                    MyEntry<K,V> p;
+//                    p = new MyEntry<>(hash, key, value, null);
+//                    if (e.hash == hash && (e.key == key || key.equals(e.key))) {
+//                        V oldValue = e.value;
+//                        e.next = p;
+////                        size++;
+////                        return oldValue;
+//                    } else {
+//                        table[pos] = new MyEntry<>(hash, key, value, table[pos]);
+////                        size++;
+////                        return null;
+//                    }
+//                }
+//                //addEntry(hash, key, value, pos);
+//            }
+//        }
 
-        }
     }
 
     @Override
@@ -90,6 +151,10 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public V put(K key, V value) {
+        if (size + 1 > threshold){
+            resize(size * 2);
+            //transfer(table);
+        }
         if (key == null){
             putForNullKey(value);
         } else {
@@ -108,7 +173,7 @@ public class HashMap2<K,V> implements Map<K,V> {
                     size++;
                     return oldValue;
                 } else {
-                    table[pos] = new MyEntry<K,V>(hash, key, value, table[pos]);
+                    table[pos] = new MyEntry<>(hash, key, value, table[pos]);
                     size++;
                     return null;
                 }

@@ -36,4 +36,19 @@ public class HashMap2Test {
         Assertions.assertThat(sut).hasSize(7);
         sut.put("idx", "two");
     }
+
+    @Test
+    public void incrementSize() throws Exception {
+        HashMap2<String, String> sut2 = new HashMap2<>(5);
+        Assertions.assertThat(sut2).hasSize(0);
+        sut2.put("0", "zero");
+        sut2.put("1", "one");
+        sut2.put("2", "two");
+        sut2.put("3", "three");
+        sut2.put("4", "four");
+        sut2.put("5", "five");
+        sut2.put("6", "six");
+        sut2.put("7", "seven");
+        Assertions.assertThat(sut2).hasSize(8);
+    }
 }
