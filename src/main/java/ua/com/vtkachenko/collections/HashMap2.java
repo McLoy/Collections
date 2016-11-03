@@ -44,12 +44,14 @@ public class HashMap2<K,V> implements Map<K,V> {
 
         @Override
         public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) return true;
+            if (o instanceof MyEntry) return false;
             MyEntry<K,V> elem = (MyEntry<K,V>)o;
-            if (key == null && elem.key == null) {
-                return value == elem.value;
+
+            if (key != null && key.equals(elem.key)) {
+                return value != null && value.equals(elem.value);
             } else {
-                return key == elem.key & value == elem.value;
+                return key.equals(elem.key) & value.equals(elem.value);
             }
         }
 
@@ -285,6 +287,7 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
+
     }
 
     @Override

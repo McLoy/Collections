@@ -6,14 +6,36 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class LinkedList3<T> implements List {
+
+    private int size;
+    private Entry<T> first, last;
+
+    public LinkedList3(){
+//        size = 0;
+//        first = new Entry<>(null, first, first);
+//        first.next = first.prev = first;
+    }
+
+    private static class Entry<T>{
+
+        private Entry<T> prev, next;
+        private T element;
+
+        private Entry(T element, Entry<T> prev, Entry<T> next){
+            this.element = element;
+            this.prev = prev;
+            this.next = next;
+        }
+    }
+
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     @Override
@@ -32,8 +54,18 @@ public class LinkedList3<T> implements List {
     }
 
     @Override
-    public boolean add(Object o) {
-        return false;
+    public boolean add(Object o)
+    {
+        makeLast((T)o);
+        return true;
+    }
+
+    private void makeLast(T e){
+        if (e != null){
+            first = new Entry<>(e, first, last);
+            last = first;
+            size++;
+        }
     }
 
     @Override
