@@ -261,27 +261,26 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public V remove(Object key) {
-//        if (containsKey(key)){
-//            MyEntry<K,V> a;
-//            V prev;
-//            for (MyEntry<K,V> curr: table) {
-//                a = curr;
-//                if (a != null){
-//                    if (curr.key == key){
-//                        curr = null;
-//                    }
-////                    do {
-////                        prev = a.value;
-////                        if (a.key == key){
-////                            return prev;
-////                        }
-////                        a = a.next;
-////                    } while (a != null);
-//                }
-//            }
-//        }
-        return null;
-
+        V prev = null;
+        if (containsKey(key)){
+            MyEntry<K,V> a;
+            for (MyEntry<K,V> curr: table) {
+                a = curr;
+                if (a != null){
+                    do {
+                        if (a.key == key){
+                            break;
+                        }
+                        prev = a.value;
+                        a = a.next;
+                    } while (a != null);
+                }
+            }
+            int hash = hash(key.hashCode());
+            int pos = indexFor(hash, table.length);
+            table[pos] = null;
+        }
+        return prev;
     }
 
     @Override
