@@ -27,9 +27,6 @@ public class HashMap2<K,V> implements Map<K,V> {
         this.table = new MyEntry[capacity];
         this.size = 0;
         this.threshold = thresholdCalc();
-        if (capacity != DEFAULT_CAPACITY){
-            resize(capacity);
-        }
     }
 
     private static class MyEntry<K,V>{
@@ -43,6 +40,27 @@ public class HashMap2<K,V> implements Map<K,V> {
             this.key = key;
             this.value = value;
             this.next = next;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            MyEntry<K,V> elem = (MyEntry<K,V>)o;
+            if (key == null && elem.key == null) {
+                return value == elem.value;
+            } else {
+                return key == elem.key & value == elem.value;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            int rezult = 17;
+            int hcValue = value != null ? value.hashCode() : 0;
+            int hcKey = key != null ? key.hashCode() : 0;
+            rezult = 37 * rezult + hcValue;
+            rezult = 37 * rezult + hcKey;
+            return rezult;
         }
     }
 
@@ -58,10 +76,18 @@ public class HashMap2<K,V> implements Map<K,V> {
         @Override
         public MyEntry<K,V> next() {
             int ind = 0;
+            MyEntry<K,V> a;
             for (MyEntry<K,V> curr: table) {
-                if (ind == index){
-                    index++;
-                    return curr;
+                a = curr;
+                if (a != null){
+                    do {
+                        if (ind == index) {
+                            index++;
+                            return a;
+                        }
+                        ind++;
+                        a = a.next;
+                    } while (a != null);
                 }
             }
             return null;
@@ -76,52 +102,45 @@ public class HashMap2<K,V> implements Map<K,V> {
         return (int)(capacity*loadFactor);
     }
 
-    void resize(int newCapacity){
+    private void resize(int newCapacity){
         if (table.length == MAXIMUM_CAPACITY){
             threshold = Integer.MAX_VALUE;
             return;
         }
-        MyEntry[] newTable = new MyEntry[newCapacity];
+        MyEntry<K,V>[] newTable = new MyEntry[newCapacity];
         transfer(newTable);
         table = newTable;
         threshold = (int)(newCapacity * loadFactor);
     }
 
-    void transfer(MyEntry<K,V>[] tabl){
-//        Iterator<MyEntry<K,V>> it = iterator();
-//        MyEntry<K,V>[] newTable = new MyEntry[capacity];
-//        while (it.hasNext()){
-//            MyEntry<K,V> elem = it.next();
-//            K key = elem.key;
-//            V value = elem.value;
-//
-//            if (key == null){
-//                putForNullKey(value);
-//            } else {
-//                int kh = key.hashCode();
-//                int hash = hash(kh);
-//                int tableLength = table.length;
-//                int pos = indexFor(hash, tableLength);
-//                MyEntry<K,V> e = table[pos];
-//                if (e != null) {
-//                    while (e.next != null) e = e.next;
-//                    MyEntry<K,V> p;
-//                    p = new MyEntry<>(hash, key, value, null);
-//                    if (e.hash == hash && (e.key == key || key.equals(e.key))) {
-//                        V oldValue = e.value;
-//                        e.next = p;
-////                        size++;
-////                        return oldValue;
-//                    } else {
-//                        table[pos] = new MyEntry<>(hash, key, value, table[pos]);
-////                        size++;
-////                        return null;
-//                    }
-//                }
-//                //addEntry(hash, key, value, pos);
-//            }
-//        }
-
+    private void transfer(MyEntry<K,V>[] nTable){
+        Iterator<MyEntry<K,V>> it = new HashMap2Iterator();
+        MyEntry<K,V> a, e, p;
+        while (it.hasNext()){
+            a = it.next();
+            if (a != null) {
+                K key = a.key;
+                V value = a.value;
+                if (key == null) {
+                    putForNullKey(value, nTable);
+                } else {
+                    int hash = hash(key.hashCode());
+                    int pos = indexFor(hash, nTable.length);
+                    e = nTable[pos];
+                    if (e != null) {
+                        while (e.next != null) e = e.next;
+                        p = new MyEntry<>(hash, key, value, null);
+                        if (e.hash == hash && (e.key == key || key.equals(e.key))) {
+                            e.next = p;
+                        } else {
+                            nTable[pos] = new MyEntry<>(hash, key, value, nTable[pos]);
+                        }
+                        continue;
+                    }
+                    addEntry(hash, key, value, pos, nTable);
+                }
+            }
+        }
     }
 
     @Override
@@ -136,32 +155,46 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        int hash = hash(key.hashCode());
+        int pos = indexFor(hash, table.length);
+        MyEntry<K,V> a = table[pos];
+        return a != null && a.key != null;
     }
 
     @Override
     public boolean containsValue(Object value) {
+        Iterator it = iterator();
+        MyEntry<K,V> a;
+        while (it.hasNext()){
+            a = (MyEntry<K,V>)it.next();
+            if (a != null && a.value == value){
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public V get(Object key) {
+        int hash = hash(key.hashCode());
+        int pos = indexFor(hash, table.length);
+        MyEntry<K,V> a = table[pos];
+        if (a != null){
+            return a.value;
+        }
         return null;
     }
 
     @Override
     public V put(K key, V value) {
-        if (size + 1 > threshold){
+        if (size > 0 && size + 1 > threshold){
             resize(size * 2);
-            //transfer(table);
         }
         if (key == null){
-            putForNullKey(value);
+            putForNullKey(value, null);
         } else {
-            int kh = key.hashCode();
-            int hash = hash(kh);
-            int tableLength = table.length;
-            int pos = indexFor(hash, tableLength);
+            int hash = hash(key.hashCode());
+            int pos = indexFor(hash, table.length);
             MyEntry<K,V> e = table[pos];
             if (e != null) {
                 while (e.next != null) e = e.next;
@@ -178,51 +211,85 @@ public class HashMap2<K,V> implements Map<K,V> {
                     return null;
                 }
             }
-            addEntry(hash, key, value, pos);
+            addEntry(hash, key, value, pos, null);
         }
         return null;
     }
 
-    void addEntry(int hash, K key, V value, int index){
-        MyEntry<K,V> e = table[index];
-        table[index] = new MyEntry<>(hash, key, value, e);
-        size++;
-    }
-
-    static int indexFor(int h, int length){
+    private static int indexFor(int h, int length){
         return h & (length - 1);
     }
 
-    static int hash(int h){
+    private static int hash(int h){
         h ^= (h >>> 20) ^ (h >>> 12);
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
 
-    private void putForNullKey(V value) {
-        MyEntry<K,V> e = table[0];
-        if (e != null){
-            MyEntry<K,V> p = new MyEntry<>(0, null, value, null);
-            while (e.next != null) e = e.next;
-            e.next = p;
+    private void putForNullKey(V value, MyEntry<K,V>[] tab) {
+        if (tab == null) {
+            MyEntry<K,V> e = table[0];
+            if (e != null){
+                MyEntry<K,V> p = new MyEntry<>(0, null, value, null);
+                while (e.next != null) e = e.next;
+                e.next = p;
+                size++;
+            } else {
+                addEntry(0, null, value, 0, null);
+            }
+        } else {
+            MyEntry<K, V> e = tab[0];
+            if (e != null) {
+                MyEntry<K, V> p = new MyEntry<>(0, null, value, null);
+                while (e.next != null) e = e.next;
+                e.next = p;
+            } else {
+                addEntry(0, null, value, 0, tab);
+            }
+        }
+    }
+
+    private void addEntry(int hash, K key, V value, int index, MyEntry<K,V>[] tab){
+        if (tab == null) {
+            MyEntry<K, V> e = table[index];
+            table[index] = new MyEntry<>(hash, key, value, e);
             size++;
         } else {
-            addEntry(0, null, value, 0);
+            MyEntry<K, V> e = tab[index];
+            tab[index] = new MyEntry<>(hash, key, value, e);
         }
     }
 
     @Override
     public V remove(Object key) {
+//        if (containsKey(key)){
+//            MyEntry<K,V> a;
+//            V prev;
+//            for (MyEntry<K,V> curr: table) {
+//                a = curr;
+//                if (a != null){
+//                    do {
+//                        prev = a.value;
+//                        if (a.key == key){
+//                            return prev;
+//                        }
+//                        a = a.next;
+//                    } while (a != null);
+//                }
+//            }
+//        }
         return null;
+
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-
     }
 
     @Override
     public void clear() {
-
+        table = new MyEntry[capacity];
+        size = 0;
+        threshold = thresholdCalc();
     }
 
     @Override
