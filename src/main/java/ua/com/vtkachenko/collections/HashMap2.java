@@ -47,7 +47,6 @@ public class HashMap2<K,V> implements Map<K,V> {
             if (this == o) return true;
             if (o instanceof MyEntry) return false;
             MyEntry<K,V> elem = (MyEntry<K,V>)o;
-
             if (key != null && key.equals(elem.key)) {
                 return value != null && value.equals(elem.value);
             } else {
@@ -72,6 +71,7 @@ public class HashMap2<K,V> implements Map<K,V> {
 
         @Override
         public boolean hasNext() {
+
             return index < size;
         }
 
@@ -80,8 +80,8 @@ public class HashMap2<K,V> implements Map<K,V> {
             int ind = 0;
             MyEntry<K,V> a;
             for (MyEntry<K,V> curr: table) {
+                if (curr == null) continue;
                 a = curr;
-                if (a != null){
                     do {
                         if (ind == index) {
                             index++;
@@ -90,7 +90,7 @@ public class HashMap2<K,V> implements Map<K,V> {
                         ind++;
                         a = a.next;
                     } while (a != null);
-                }
+
             }
             return null;
         }
@@ -120,28 +120,26 @@ public class HashMap2<K,V> implements Map<K,V> {
         MyEntry<K,V> a, e, p;
         while (it.hasNext()){
             a = it.next();
-            if (a != null) {
                 K key = a.key;
                 V value = a.value;
                 if (key == null) {
-                    putForNullKey(value, nTable);
+                    nTable[0] = new MyEntry<>(0, null, value, null);
                 } else {
                     int hash = hash(key.hashCode());
                     int pos = indexFor(hash, nTable.length);
                     e = nTable[pos];
                     if (e != null) {
-                        while (e.next != null) e = e.next;
                         p = new MyEntry<>(hash, key, value, null);
                         if (e.hash == hash && (e.key == key || key.equals(e.key))) {
-                            e.next = p;
+                            nTable[pos] = p;
                         } else {
-                            nTable[pos] = new MyEntry<>(hash, key, value, nTable[pos]);
+                            while (e.next != null) e = e.next;
+                            e.next = new MyEntry<>(hash, key, value, null);
                         }
                         continue;
                     }
-                    addEntry(hash, key, value, pos, nTable);
+                    nTable[pos] = new MyEntry<>(hash, key, value, e);
                 }
-            }
         }
     }
 
@@ -159,7 +157,7 @@ public class HashMap2<K,V> implements Map<K,V> {
     public boolean containsKey(Object key) {
         int hash = hash(key.hashCode());
         int pos = indexFor(hash, table.length);
-        MyEntry<K,V> a = table[pos];
+        MyEntry<K, V> a = table[pos];
         return a != null && a.key != null;
     }
 
@@ -180,11 +178,12 @@ public class HashMap2<K,V> implements Map<K,V> {
     public V get(Object key) {
         int hash = hash(key.hashCode());
         int pos = indexFor(hash, table.length);
-        MyEntry<K,V> a = table[pos];
-        if (a != null){
+        MyEntry<K, V> a = table[pos];
+        if (a != null) {
             return a.value;
+        } else {
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -193,27 +192,25 @@ public class HashMap2<K,V> implements Map<K,V> {
             resize(size * 2);
         }
         if (key == null){
-            putForNullKey(value, null);
+            putForNullKey(value);
         } else {
             int hash = hash(key.hashCode());
             int pos = indexFor(hash, table.length);
             MyEntry<K,V> e = table[pos];
             if (e != null) {
-                while (e.next != null) e = e.next;
-                MyEntry<K,V> p;
-                p = new MyEntry<>(hash, key, value, null);
+                MyEntry<K,V> p = new MyEntry<>(hash, key, value, null);
                 if (e.hash == hash && (e.key == key || key.equals(e.key))) {
                     V oldValue = e.value;
-                    e.next = p;
-                    size++;
+                    table[pos] = p;
                     return oldValue;
                 } else {
-                    table[pos] = new MyEntry<>(hash, key, value, table[pos]);
+                    while (e.next != null) e = e.next;
+                    e.next = new MyEntry<>(hash, key, value, null);
                     size++;
                     return null;
                 }
             }
-            addEntry(hash, key, value, pos, null);
+            addEntry(hash, key, value, pos);
         }
         return null;
     }
@@ -227,38 +224,19 @@ public class HashMap2<K,V> implements Map<K,V> {
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
 
-    private void putForNullKey(V value, MyEntry<K,V>[] tab) {
-        if (tab == null) {
-            MyEntry<K,V> e = table[0];
-            if (e != null){
-                MyEntry<K,V> p = new MyEntry<>(0, null, value, null);
-                while (e.next != null) e = e.next;
-                e.next = p;
-                size++;
-            } else {
-                addEntry(0, null, value, 0, null);
-            }
+    private void putForNullKey(V value) {
+        MyEntry<K,V> e = table[0];
+        if (e != null) {
+            e.value = value;
         } else {
-            MyEntry<K, V> e = tab[0];
-            if (e != null) {
-                MyEntry<K, V> p = new MyEntry<>(0, null, value, null);
-                while (e.next != null) e = e.next;
-                e.next = p;
-            } else {
-                addEntry(0, null, value, 0, tab);
-            }
+            addEntry(0, null, value, 0);
         }
     }
 
-    private void addEntry(int hash, K key, V value, int index, MyEntry<K,V>[] tab){
-        if (tab == null) {
-            MyEntry<K, V> e = table[index];
-            table[index] = new MyEntry<>(hash, key, value, e);
-            size++;
-        } else {
-            MyEntry<K, V> e = tab[index];
-            tab[index] = new MyEntry<>(hash, key, value, e);
-        }
+    private void addEntry(int hash, K key, V value, int index) {
+        MyEntry<K, V> e = table[index];
+        table[index] = new MyEntry<>(hash, key, value, e);
+        size++;
     }
 
     @Override
