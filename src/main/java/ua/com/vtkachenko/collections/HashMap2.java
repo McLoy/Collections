@@ -55,14 +55,6 @@ public class HashMap2<K,V> implements Map<K,V> {
             this.value = value;
             return old;
         }
-
-        public MyEntry<K, V> getNext() {
-            return next;
-        }
-
-        public void setNext(MyEntry<K, V> next) {
-            this.next = next;
-        }
     }
 
     private class HashMap2Iterator implements Iterator<MyEntry<K,V>> {
@@ -92,11 +84,6 @@ public class HashMap2<K,V> implements Map<K,V> {
 
             }
             return null;
-        }
-
-        @Override
-        public void remove(){
-
         }
     }
 
@@ -218,7 +205,7 @@ public class HashMap2<K,V> implements Map<K,V> {
                 MyEntry<K,V> p = new MyEntry<>(hash, key, value, null);
                 if (compare(e, hash, key)) {
                     V oldValue = e.value;
-                    table[pos] = p;
+                    e.setValue(p.value);
                     return oldValue;
                 } else {
                     while (e.next != null) {
@@ -236,6 +223,27 @@ public class HashMap2<K,V> implements Map<K,V> {
             addEntry(hash, key, value, pos);
         }
         return null;
+    }
+
+    @Override
+    public String toString(){
+        Iterator<Entry<K,V>> i = entrySet().iterator();
+        if (! i.hasNext())
+            return "{}";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        for (;;) {
+            Entry<K,V> e = i.next();
+            K key = e.getKey();
+            V value = e.getValue();
+            sb.append(key   == this ? "(this Map)" : key);
+            sb.append('=');
+            sb.append(value == this ? "(this Map)" : value);
+            if (! i.hasNext())
+                return sb.append('}').toString();
+            sb.append(',').append(' ');
+        }
     }
 
     private int hash(int h) {

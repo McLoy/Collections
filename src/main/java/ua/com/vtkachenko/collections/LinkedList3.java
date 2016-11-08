@@ -72,7 +72,7 @@ public class LinkedList3<T> implements List {
 
     @Override
     public Iterator iterator() {
-        return null;
+        return new LinkedList3Iterator<>();
     }
 
     @Override
@@ -130,7 +130,35 @@ public class LinkedList3<T> implements List {
 
     @Override
     public void add(int index, Object element) {
+        if (index == 0){
+            makeFirst((T)element);
+        } else {
+            int count = 0;
+            ListBox<T> curr = first;
+            while (curr != null || curr.next != null) {
+                if (count == index - 1) {
+                    ListBox<T> newBox = new ListBox<>((T) element, curr, curr.next);
+                    curr.next.prev = newBox;
+                    curr.next = newBox;
+                    size++;
+                    break;
+                }
+                count++;
+                curr = curr.next;
+            }
+        }
+    }
 
+    private void makeFirst(T e){
+        ListBox<T> f = first;
+        ListBox newBox = new ListBox(e, null, f);
+        first = newBox;
+        if (f == null) {
+            last = newBox;
+        } else {
+            f.prev = newBox;
+        }
+        size++;
     }
 
     @Override

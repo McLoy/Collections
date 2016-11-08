@@ -32,6 +32,7 @@ public class HashMap2Test {
         Assertions.assertThat(sut).isNotEmpty();
         Assertions.assertThat(sut).hasSize(3);
         sut.put("idx", "two");
+        System.out.println(sut.toString());
     }
 
     @Test

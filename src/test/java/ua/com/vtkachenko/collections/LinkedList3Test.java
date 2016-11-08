@@ -52,6 +52,7 @@ public class LinkedList3Test {
         sut.add("C");
         sut.add(1, "D");
         Assertions.assertThat(sut.size()).isEqualTo(4);
+        sut.add(0, "J");
     }
 
     @Test
