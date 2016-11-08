@@ -29,7 +29,7 @@ public class LinkedList3Test {
     }
 
     @Test
-    public void contents() throws Exception {
+    public void contains() throws Exception {
         sut.add("E");
         sut.add("A");
         Assertions.assertThat(sut.contains("A")).isTrue();

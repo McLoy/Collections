@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class LinkedList3<T> implements List {
-
+    public static final int DEFAULT_SIZE = 0;
     private int size;
     private ListBox<T> first, last;
 
     public LinkedList3(){
-        size = 0;
+        size = DEFAULT_SIZE;
     }
 
     private static class ListBox<T>{
@@ -23,6 +23,27 @@ public class LinkedList3<T> implements List {
             this.element = element;
             this.prev = prev;
             this.next = next;
+        }
+    }
+
+    private class LinkedList3Iterator<T> implements Iterator<T>{
+
+        private ListBox<T> cursor = (ListBox<T>) first;
+
+        @Override
+        public boolean hasNext() {
+            return cursor != null;
+        }
+
+        @Override
+        public T next() {
+            T ret;
+            if (cursor != null){
+                ret = cursor.element;
+                cursor = cursor.next;
+                return ret;
+            }
+            return null;
         }
     }
 
@@ -38,6 +59,14 @@ public class LinkedList3<T> implements List {
 
     @Override
     public boolean contains(Object o) {
+        T curr;
+        Iterator it = new LinkedList3Iterator();
+        while (it.hasNext()){
+            curr = (T) it.next();
+            if (curr != null && (curr == (T)o || o.equals(curr))){
+                return true;
+            }
+        }
         return false;
     }
 

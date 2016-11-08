@@ -28,7 +28,7 @@ public class LinkedList2Test {
     }
 
     @Test
-    public void contents() throws Exception {
+    public void contains() throws Exception {
         sut.add("E");
         sut.add("A");
         Assertions.assertThat(sut.contains("A")).isTrue();
