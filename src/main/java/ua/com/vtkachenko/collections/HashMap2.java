@@ -29,7 +29,7 @@ public class HashMap2<K,V> implements Map<K,V> {
         this.threshold = thresholdCalc();
     }
 
-    private static class MyEntry<K,V>{
+    private static class MyEntry<K,V>{//} implements Map.Entry<K,V>{
         V value;
         K key;
         int hash;
@@ -42,27 +42,44 @@ public class HashMap2<K,V> implements Map<K,V> {
             this.next = next;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o instanceof MyEntry) return false;
-            MyEntry<K,V> elem = (MyEntry<K,V>)o;
-            if (key != null && key.equals(elem.key)) {
-                return value != null && value.equals(elem.value);
-            } else {
-                return key.equals(elem.key) & value.equals(elem.value);
-            }
-        }
+//        @Override
+//        public K getKey() {
+//            return key;
+//        }
+//
+//        @Override
+//        public V getValue() {
+//            return value;
+//        }
+//
+//        @Override
+//        public V setValue(V value) {
+//            V old = this.value;
+//            this.value = value;
+//            return old;
+//        }
 
-        @Override
-        public int hashCode() {
-            int rezult = 17;
-            int hcValue = value != null ? value.hashCode() : 0;
-            int hcKey = key != null ? key.hashCode() : 0;
-            rezult = 37 * rezult + hcValue;
-            rezult = 37 * rezult + hcKey;
-            return rezult;
-        }
+//        @Override
+//        public boolean equals(Object o) {
+//            if (this == o) return true;
+//            if (o instanceof MyEntry) return false;
+//            MyEntry<K,V> elem = (MyEntry<K,V>)o;
+//            if (key != null && key.equals(elem.key)) {
+//                return value != null && value.equals(elem.value);
+//            } else {
+//                return key.equals(elem.key) & value.equals(elem.value);
+//            }
+//        }
+//
+//        @Override
+//        public int hashCode() {
+//            int rezult = 17;
+//            int hcValue = value != null ? value.hashCode() : 0;
+//            int hcKey = key != null ? key.hashCode() : 0;
+//            rezult = 37 * rezult + hcValue;
+//            rezult = 37 * rezult + hcKey;
+//            return rezult;
+//        }
     }
 
     private class HashMap2Iterator implements Iterator<MyEntry<K,V>> {
@@ -71,7 +88,6 @@ public class HashMap2<K,V> implements Map<K,V> {
 
         @Override
         public boolean hasNext() {
-
             return index < size;
         }
 
@@ -125,16 +141,24 @@ public class HashMap2<K,V> implements Map<K,V> {
                 if (key == null) {
                     nTable[0] = new MyEntry<>(0, null, value, null);
                 } else {
+                    //int hash = hash(key.hashCode());
                     int hash = hash(key.hashCode());
-                    int pos = indexFor(hash, nTable.length);
+                    //int pos = hash & (nTable.length - 1);
+                    int pos = hash % nTable.length;
                     e = nTable[pos];
                     if (e != null) {
                         p = new MyEntry<>(hash, key, value, null);
                         if (e.hash == hash && (e.key == key || key.equals(e.key))) {
                             nTable[pos] = p;
                         } else {
-                            while (e.next != null) e = e.next;
-                            e.next = new MyEntry<>(hash, key, value, null);
+                            while (e.next != null) {
+                                e = e.next;
+                                if (e.hash == hash && (e.key == key || key.equals(e.key))) {
+                                    e = p;
+                                    break;
+                                }
+                            }
+                            e.next = p;
                         }
                         continue;
                     }
@@ -155,10 +179,15 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public boolean containsKey(Object key) {
-        int hash = hash(key.hashCode());
-        int pos = indexFor(hash, table.length);
-        MyEntry<K, V> a = table[pos];
-        return a != null && a.key != null;
+        Iterator it = iterator();
+        MyEntry<K,V> a;
+        while (it.hasNext()){
+            a = (MyEntry<K,V>)it.next();
+            if (a != null && (a.key == key || key.equals(a.key))){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -167,7 +196,7 @@ public class HashMap2<K,V> implements Map<K,V> {
         MyEntry<K,V> a;
         while (it.hasNext()){
             a = (MyEntry<K,V>)it.next();
-            if (a != null && a.value == value){
+            if (a != null && (a.value == value || value.equals(a.value))){
                 return true;
             }
         }
@@ -176,14 +205,16 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public V get(Object key) {
-        int hash = hash(key.hashCode());
-        int pos = indexFor(hash, table.length);
-        MyEntry<K, V> a = table[pos];
-        if (a != null) {
-            return a.value;
-        } else {
-            return null;
+        Iterator it = iterator();
+        MyEntry<K,V> a;
+        V ret = null;
+        while (it.hasNext()){
+            a = (MyEntry<K, V>) it.next();
+            if (a != null && (a.key == key || key.equals(a.key))){
+                ret = a.value;
+            }
         }
+        return ret;
     }
 
     @Override
@@ -195,7 +226,8 @@ public class HashMap2<K,V> implements Map<K,V> {
             putForNullKey(value);
         } else {
             int hash = hash(key.hashCode());
-            int pos = indexFor(hash, table.length);
+            //int pos = hash & (table.length - 1);
+            int pos = hash % table.length;
             MyEntry<K,V> e = table[pos];
             if (e != null) {
                 MyEntry<K,V> p = new MyEntry<>(hash, key, value, null);
@@ -204,8 +236,14 @@ public class HashMap2<K,V> implements Map<K,V> {
                     table[pos] = p;
                     return oldValue;
                 } else {
-                    while (e.next != null) e = e.next;
-                    e.next = new MyEntry<>(hash, key, value, null);
+                    while (e.next != null) {
+                        e = e.next;
+                        if (e.hash == hash && (e.key == key || key.equals(e.key))) {
+                            e = p;
+                            break;
+                        }
+                    }
+                    e.next = p;
                     size++;
                     return null;
                 }
@@ -215,11 +253,11 @@ public class HashMap2<K,V> implements Map<K,V> {
         return null;
     }
 
-    private static int indexFor(int h, int length){
-        return h & (length - 1);
-    }
+//    private int indexFor(int h){
+//        return h % table.length;
+//    }
 
-    private static int hash(int h){
+    private int hash(int h) {
         h ^= (h >>> 20) ^ (h >>> 12);
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
@@ -242,24 +280,23 @@ public class HashMap2<K,V> implements Map<K,V> {
     @Override
     public V remove(Object key) {
         V prev = null;
-        if (containsKey(key)){
             MyEntry<K,V> a;
             for (MyEntry<K,V> curr: table) {
                 a = curr;
                 if (a != null){
                     do {
-                        if (a.key == key){
-                            break;
+                        if (a.key == key || key.equals(a.key)){
+                            a = null;
+                            return prev;
+                            //udalenie
+                            //return pred znachenie
+                            //break;
                         }
                         prev = a.value;
                         a = a.next;
                     } while (a != null);
                 }
             }
-            int hash = hash(key.hashCode());
-            int pos = indexFor(hash, table.length);
-            table[pos] = null;
-        }
         return prev;
     }
 
@@ -277,16 +314,16 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public Set<K> keySet() {
-        return null;
+        return null;//HashSet soderjit klu4i
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return null; ///ArrayList zapolnit 4erez iterator
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        return null;//HashSet soderjit Map.Entry
     }
 }

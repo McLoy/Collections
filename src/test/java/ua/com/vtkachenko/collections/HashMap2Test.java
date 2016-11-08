@@ -7,10 +7,12 @@ import org.junit.Test;
 public class HashMap2Test {
 
     private HashMap2<String, String> sut;
+    private HashMap2<Integer, Integer> sutInt;
 
     @Before
     public void setUp() throws Exception{
         sut = new HashMap2<>();
+        sutInt = new HashMap2<>();
     }
 
     @Test
@@ -96,5 +98,13 @@ public class HashMap2Test {
         sut.put("bb", "BB");
         sut.clear();
         Assertions.assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void putInt() throws Exception {
+        sutInt.put(88,10);
+        sutInt.put(99,20);
+        sutInt.put(5,40);
+        sutInt.put(39,50);
     }
 }
