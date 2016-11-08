@@ -22,8 +22,9 @@ public class LinkedList3Test {
     public void addSize() throws Exception {
         sut.add("A");
         sut.add("B");
+        sut.add("C");
         Assertions.assertThat(sut).isNotEmpty();
-        Assertions.assertThat(sut.size()).isEqualTo(2);
+        Assertions.assertThat(sut.size()).isEqualTo(3);
         Assertions.assertThat(sut.isEmpty()).isFalse();
     }
 

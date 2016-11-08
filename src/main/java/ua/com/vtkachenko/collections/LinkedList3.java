@@ -8,20 +8,18 @@ import java.util.ListIterator;
 public class LinkedList3<T> implements List {
 
     private int size;
-    private Entry<T> first, last;
+    private ListBox<T> first, last;
 
     public LinkedList3(){
-//        size = 0;
-//        first = new Entry<>(null, first, first);
-//        first.next = first.prev = first;
+        size = 0;
     }
 
-    private static class Entry<T>{
+    private static class ListBox<T>{
 
-        private Entry<T> prev, next;
+        private ListBox<T> prev, next;
         private T element;
 
-        private Entry(T element, Entry<T> prev, Entry<T> next){
+        private ListBox(T element, ListBox<T> prev, ListBox<T> next){
             this.element = element;
             this.prev = prev;
             this.next = next;
@@ -54,18 +52,21 @@ public class LinkedList3<T> implements List {
     }
 
     @Override
-    public boolean add(Object o)
-    {
+    public boolean add(Object o){
         makeLast((T)o);
         return true;
     }
 
     private void makeLast(T e){
-        if (e != null){
-            first = new Entry<>(e, first, last);
-            last = first;
-            size++;
+        ListBox<T> l = last;
+        ListBox newBox = new ListBox(e, l, null);
+        last = newBox;
+        if (l == null) {
+            first = newBox;
+        } else {
+            l.next = newBox;
         }
+        size++;
     }
 
     @Override
