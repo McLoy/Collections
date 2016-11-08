@@ -90,6 +90,7 @@ public class HashMap2Test {
         sut.put(null, "Surprise");
         sut.put(null, "2-Surprise");
         Assertions.assertThat(sut.remove("key")).isEqualTo("3-zero");
+        Assertions.assertThat(sut).hasSize(2);
     }
 
     @Test
@@ -106,5 +107,27 @@ public class HashMap2Test {
         sutInt.put(99,20);
         sutInt.put(5,40);
         sutInt.put(39,50);
+        Assertions.assertThat(sutInt).hasSize(4);
+    }
+
+    @Test
+    public void keySet() throws Exception {
+        sut.put("0", "zero");
+        sut.put("key", "one");
+        sut.put(null, null);
+        sut.put("0", "2-zero");
+        sut.put("0", "3-zero");
+        sut.put(null, "Surprise");
+        sut.put(null, "2-Surprise");
+        Assertions.assertThat(sut.keySet()).hasSize(3);
+    }
+
+    @Test
+    public void values() throws Exception {
+        sutInt.put(88,10);
+        sutInt.put(99,20);
+        sutInt.put(5,40);
+        sutInt.put(39,50);
+        Assertions.assertThat(sutInt.values()).hasSize(4);
     }
 }
