@@ -32,7 +32,6 @@ public class HashMap2Test {
         Assertions.assertThat(sut).isNotEmpty();
         Assertions.assertThat(sut).hasSize(3);
         sut.put("idx", "two");
-        System.out.println(sut.toString());
     }
 
     @Test
@@ -83,15 +82,12 @@ public class HashMap2Test {
 
     @Test
     public void remove() throws Exception {
-        sut.put("0", "zero");
-        sut.put("key", "one");
-        sut.put(null, null);
-        sut.put("0", "2-zero");
-        sut.put("0", "3-zero");
-        sut.put(null, "Surprise");
-        sut.put(null, "2-Surprise");
-        Assertions.assertThat(sut.remove("key")).isEqualTo("3-zero");
-        Assertions.assertThat(sut).hasSize(2);
+        sut.put(null, "null");
+        sut.put("aa", "AA");
+        sut.put("bb", "BB");
+        sut.put("cc", "CC");
+        Assertions.assertThat(sut.remove("bb")).isEqualTo("AA");
+        Assertions.assertThat(sut).hasSize(3);
     }
 
     @Test

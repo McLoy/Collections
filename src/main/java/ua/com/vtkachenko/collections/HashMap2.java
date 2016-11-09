@@ -39,6 +39,10 @@ public class HashMap2<K,V> implements Map<K,V> {
             this.next = next;
         }
 
+        MyEntry(K key, V value){
+            this(Objects.hashCode(key), key, value, null);
+        }
+
         @Override
         public K getKey() {
             return key;
@@ -107,35 +111,31 @@ public class HashMap2<K,V> implements Map<K,V> {
     }
 
     private void transfer(MyEntry<K,V>[] nTable){
-        Iterator<MyEntry<K,V>> it = new HashMap2Iterator();
-        MyEntry<K,V> a, e, p;
-        while (it.hasNext()) {
-            a = it.next();
-            K key = a.key;
-            V value = a.value;
-            if (key == null) {
-                nTable[0] = new MyEntry<>(0, null, value, null);
+        MyEntry<K,V> currEntry;
+        Iterator it = iterator();
+        while (it.hasNext()){
+            currEntry = (MyEntry<K, V>) it.next();
+            K key = currEntry.key;
+            V value = currEntry.value;
+            int hash = getHash(key);
+            int bucketIndex = getIndex(hash, nTable);
+            MyEntry<K, V> bucket = nTable[bucketIndex];
+
+            if (bucket == null) {
+                setInBucket(bucketIndex, new MyEntry<>(key, value), nTable);
             } else {
-                int hash = hash(key.hashCode());
-                int pos = hash % nTable.length;
-                e = nTable[pos];
-                if (e != null) {
-                    p = new MyEntry<>(hash, key, value, null);
-                    if (compare(e, hash, key)) {
-                        nTable[pos] = p;
-                    } else {
-                        while (e.next != null) {
-                            e = e.next;
-                            if (compare(e, hash, key)) {
-                                e = p;
-                                break;
-                            }
-                        }
-                        e.next = p;
+                MyEntry<K, V> curr = bucket;
+                do {
+                    if (compareKeys(curr, key)) {
+                        curr.setValue(value);
                     }
-                    continue;
-                }
-                nTable[pos] = new MyEntry<>(hash, key, value, e);
+                    if (curr.next == null) {
+                        curr.next = new MyEntry<>(key, value);
+                        setInBucket(bucketIndex, bucket, nTable);
+                        break;
+                    }
+                    curr = curr.next;
+                } while (curr != null);
             }
         }
     }
@@ -153,10 +153,10 @@ public class HashMap2<K,V> implements Map<K,V> {
     @Override
     public boolean containsKey(Object key) {
         Iterator it = iterator();
-        MyEntry<K,V> a;
+        MyEntry<K,V> curr;
         while (it.hasNext()){
-            a = (MyEntry<K,V>)it.next();
-            if (a != null && (a.key == key || key.equals(a.key))){
+            curr = (MyEntry<K,V>)it.next();
+            if (compareKeys(curr, (K) key)){
                 return true;
             }
         }
@@ -166,10 +166,10 @@ public class HashMap2<K,V> implements Map<K,V> {
     @Override
     public boolean containsValue(Object value) {
         Iterator it = iterator();
-        MyEntry<K,V> a;
+        MyEntry<K,V> curr;
         while (it.hasNext()){
-            a = (MyEntry<K,V>)it.next();
-            if (a != null && (a.value == value || value.equals(a.value))){
+            curr = (MyEntry<K,V>)it.next();
+            if (curr != null && (curr.value == value || value.equals(curr.value))){
                 return true;
             }
         }
@@ -179,12 +179,13 @@ public class HashMap2<K,V> implements Map<K,V> {
     @Override
     public V get(Object key) {
         Iterator it = iterator();
-        MyEntry<K,V> a;
+        MyEntry<K,V> curr;
         V ret = null;
         while (it.hasNext()){
-            a = (MyEntry<K, V>) it.next();
-            if (a != null && (a.key == key || key.equals(a.key))){
-                ret = a.value;
+            curr = (MyEntry<K, V>) it.next();
+            if (compareKeys(curr, (K) key)){
+                ret = curr.value;
+                break;
             }
         }
         return ret;
@@ -192,49 +193,68 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public V put(K key, V value) {
-        if (size > 0 && size + 1 > threshold){
-            resize(size * 2);
-        }
-        if (key == null){
-            putForNullKey(value);
+        if (size > 0 && size + 1 > threshold) resize(size * 2);
+        int hash = getHash(key);
+        int bucketIndex = getIndex(hash);
+        MyEntry<K, V> bucket = table[bucketIndex];
+
+        if (bucket == null) {
+            setInBucket(bucketIndex, new MyEntry<>(key, value));
         } else {
-            int hash = hash(key.hashCode());
-            int pos = hash % table.length;
-            MyEntry<K,V> e = table[pos];
-            if (e != null) {
-                MyEntry<K,V> p = new MyEntry<>(hash, key, value, null);
-                if (compare(e, hash, key)) {
-                    V oldValue = e.value;
-                    e.setValue(p.value);
+            MyEntry<K, V> curr = bucket;
+            do {
+                if (compareKeys(curr, key)) {
+                    V oldValue = curr.value;
+                    curr.setValue(value);
                     return oldValue;
-                } else {
-                    while (e.next != null) {
-                        e = e.next;
-                        if (compare(e, hash, key)) {
-                            e = p;
-                            break;
-                        }
-                    }
-                    e.next = p;
-                    size++;
+                }
+                if (curr.next == null) {
+                    curr.next = new MyEntry<>(key, value);
+                    setInBucket(bucketIndex, bucket);
                     return null;
                 }
-            }
-            addEntry(hash, key, value, pos);
+                curr = curr.next;
+            } while (curr != null);
+
         }
         return null;
     }
 
+    private int getIndex(int hash, MyEntry<K,V>[] tab) {
+        return hash % tab.length;
+//        hash ^= (hash >>> 20) ^ (hash >>> 12); //hash by habrhabr
+//        hash = hash ^ (hash >>> 7) ^ (hash >>> 4); //hash by habrhabr
+//        return hash & (tab.length - 1); //hash by habrhabr
+    }
+
+    private int getIndex(int hash) {
+        return getIndex(hash, table);
+    }
+
+    private int getHash(K key) {
+        return Objects.hashCode(key);
+        //return key == null ?  0 : key.hashCode(); //key by habrhabr
+    }
+
+    private void setInBucket(int bucketIndex, MyEntry<K, V> bucket, MyEntry<K,V>[] tab) {
+        tab[bucketIndex] = bucket;
+    }
+
+    private void setInBucket(int bucketIndex, MyEntry<K, V> bucket) {
+        setInBucket(bucketIndex, bucket, table);
+        size++;
+    }
+
     @Override
     public String toString(){
-        Iterator<Entry<K,V>> i = entrySet().iterator();
+        Iterator<MyEntry<K,V>> i = iterator();
         if (! i.hasNext())
             return "{}";
 
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         for (;;) {
-            Entry<K,V> e = i.next();
+            MyEntry<K,V> e = i.next();
             K key = e.getKey();
             V value = e.getValue();
             sb.append(key   == this ? "(this Map)" : key);
@@ -246,74 +266,41 @@ public class HashMap2<K,V> implements Map<K,V> {
         }
     }
 
-    private int hash(int h) {
-        h ^= (h >>> 20) ^ (h >>> 12);
-        return h ^ (h >>> 7) ^ (h >>> 4);
-    }
-
-    private void putForNullKey(V value) {
-        MyEntry<K,V> e = table[0];
-        if (e != null) {
-            e.value = value;
-        } else {
-            addEntry(0, null, value, 0);
-        }
-    }
-
-    private void addEntry(int hash, K key, V value, int index) {
-        MyEntry<K, V> e = table[index];
-        table[index] = new MyEntry<>(hash, key, value, e);
-        size++;
-    }
-
     @Override
-    public V remove(Object keyD) {
+    public V remove(Object key) {
         V prev = null;
-        V prevT = null;
-        MyEntry<K,V>[] nTable = new MyEntry[capacity];
-        Iterator<MyEntry<K,V>> it = new HashMap2Iterator();
-        MyEntry<K,V> a, e, p;
-        while (it.hasNext()) {
-            a = it.next();
-            K key = a.key;
-            if (keyD != key || !key.equals(keyD)) {
-                V value = a.value;
-                prevT = value;
-                if (key == null) {
-                    nTable[0] = new MyEntry<>(0, null, value, null);
+        int hash = getHash((K)key);
+        int bucketIndex = getIndex(hash, table);
+        boolean flag = false;
+        MyEntry<K, V> bucket = table[bucketIndex];
+        MyEntry<K, V> newBucket = null, newEntry = null;
+        if (bucket != null) {
+            MyEntry<K, V> curr = bucket;
+            do {
+                if (compareKeys(curr, (K)key)) {
+                    curr = curr.next;
+                    flag = true;
+                    size--;
+                    continue;
                 } else {
-                    int hash = hash(key.hashCode());
-                    int pos = hash % nTable.length;
-                    e = nTable[pos];
-                    if (e != null) {
-                        p = new MyEntry<>(hash, key, value, null);
-                        if (compare(e, hash, key)) {
-                            nTable[pos] = p;
-                        } else {
-                            while (e.next != null) {
-                                e = e.next;
-                                if (compare(e, hash, key)) {
-                                    e = p;
-                                    break;
-                                }
-                            }
-                            e.next = p;
-                        }
-                        continue;
+                    if (!flag) prev = curr.value;
+                    if (newEntry != null){
+                        newEntry.next = new MyEntry<>(curr.key, curr.value);
+                        newBucket = newEntry;
+                        newEntry = newEntry.next;
+                    } else {
+                        newEntry = new MyEntry<>(curr.key, curr.value);
                     }
-                    nTable[pos] = new MyEntry<>(hash, key, value, e);
                 }
-            } else {
-                prev = prevT;
-            }
+                curr = curr.next;
+            } while (curr != null);
+            table[bucketIndex] = newBucket;
         }
-        table = nTable;
-        size--;
         return prev;
     }
 
-    private boolean compare(MyEntry<K,V> e, int hash, K key){
-        return e.hash == hash && (e.key == key || key.equals(e.key));
+    private boolean compareKeys(MyEntry<K,V> e, K key){
+        return e.hash == getHash(key) && (e.key == key || e.key.equals(key));
     }
 
     @Override
