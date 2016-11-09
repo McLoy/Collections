@@ -51,8 +51,8 @@ public class LinkedList3Test {
         sut.add("B");
         sut.add("C");
         sut.add(1, "D");
-        Assertions.assertThat(sut.size()).isEqualTo(4);
-        sut.add(0, "J");
+        sut.add(3, "J");
+        Assertions.assertThat(sut.size()).isEqualTo(5);
     }
 
     @Test
@@ -101,7 +101,9 @@ public class LinkedList3Test {
         sut.add("A");
         sut.add("B");
         sut.add("C");
+        Assertions.assertThat(sut.get(0)).isEqualTo("A");
         Assertions.assertThat(sut.get(1)).isEqualTo("B");
+        Assertions.assertThat(sut.get(2)).isEqualTo("C");
     }
 
     @Test
