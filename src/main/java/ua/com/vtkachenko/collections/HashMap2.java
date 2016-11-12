@@ -178,17 +178,10 @@ public class HashMap2<K,V> implements Map<K,V> {
 
     @Override
     public V get(Object key) {
-        Iterator it = iterator();
-        MyEntry<K,V> curr;
-        V ret = null;
-        while (it.hasNext()){
-            curr = (MyEntry<K, V>) it.next();
-            if (compareKeys(curr, (K) key)){
-                ret = curr.value;
-                break;
-            }
-        }
-        return ret;
+        int hash = getHash((K) key);
+        int bucketIndex = getIndex(hash);
+        MyEntry<K, V> bucket = table[bucketIndex];
+        return bucket.value;
     }
 
     @Override
